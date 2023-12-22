@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "venv/bin/python",  // Ruta al intérprete de Python en tu entorno virtual
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintPath": "venv/bin/pylint",  // Ruta al pylint en tu entorno virtual
+}
