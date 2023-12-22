@@ -4,18 +4,14 @@ import random
 from src.enemies import WaterEnemy
 
 def generate_enemy_wave(level):
-    # Genera una oleada de enemigos basada en el nivel actual del juego.
-    # Puedes personalizar esta función según la lógica de tu juego.
     enemies = []
     for _ in range(level * 2):
-        health = random.randint(5, 20)
-        damage = random.randint(1, 5)
+        health = random.randint(5, 20) # Generar la vida aleatoriamente, luego según la vida cambiar sprite/tipo enemigo
+        damage = random.randint(1, 5) # Daño aleatorio (debería depender de la vida/nivel del enemigo)
         enemies.append(WaterEnemy(health, damage))
     return enemies
 
-def purchase_defense(player, defense):
-    # Realiza la lógica de compra de defensa.
-    # Puedes ajustar esto según la economía de tu juego.
+def purchase_defense(player, defense): #Comprar defensas
     if player.tokens >= defense.cost:
         player.tokens -= defense.cost
         return True
