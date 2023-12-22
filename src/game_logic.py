@@ -1,4 +1,5 @@
 # game_logic.py
+import pygame # 2.5.2v
 from src import player, enemies
 
 def start_game():
