@@ -1,10 +1,10 @@
 # main.py
 import pygame # 2.5.2v
-from src import game_logic
+import src.game_logic as gl
 
 def main():
     pygame.init()
-    game_logic.start_game()
+    gl.start_game()
 
 if __name__ == "__main__":
     main()
