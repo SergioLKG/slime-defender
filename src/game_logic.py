@@ -1,8 +1,5 @@
 # game_logic.py
-import pygame # 2.5.2v
-import util.colors as c
-from util.gameconf import *
-
+import util.colors as c , util.gameconf as conf, pygame # 2.5.2v
 
 def start_game():
     # PYGAME CONFIG

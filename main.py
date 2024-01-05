@@ -1,6 +1,5 @@
 # main.py
-import pygame # 2.5.2v
-import src.game_logic as gl
+import src.game_logic as gl, pygame # 2.5.2v
 
 def main():
     pygame.init()
