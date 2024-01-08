@@ -36,10 +36,12 @@ def start_game():
     clock = pygame.time.Clock()
     click_timer = 0
 
+    # LOGICA
     def game_logic():
+
         pass
 
-    #  Bucle del juego
+    #  Bucle del JUEGO
     running = True
     while running:
         running = not handle_events()  # Eventos registrados del programa
@@ -58,8 +60,6 @@ def start_game():
 
         pygame.display.flip()  # Actualizar pantalla
         clock.tick(60)  # Felocidad de fotogramas
-    pygame.quit()
-    quit()
 
 
 def click():  # Lo que ocurre al hacer click
