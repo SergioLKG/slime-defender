@@ -1,10 +1,12 @@
 # game_logic.py
-import this
-
 import pygame  # 2.5.2v
+
+import src.ui.user_input as user_input
+import src.ui.gameover_menu as gameover_menu
+import src.ui.game_menu as game_menu
 import src.util.gameconf as conf
+from src.util.users import *
 import src.controls.mouse as mouseconf
-import src.controls.keys as keysconf
 
 
 def __init__():
@@ -20,41 +22,30 @@ def start_game():
     custom_cursor = mouseconf.Cursor()
 
     # MOUSE
-    pygame.mouse.set_visible(0)
+    pygame.mouse.set_visible(0) # Mouse Disable (Usando Custom -> controls\mouse.py)
     ##############################
-    # CONSTANTES
-    SHOP_COINS: int = 0  # Monedas de la tienda
-    INGAME_COINS: int = 0  # AQUAFRAGMENTS
-
-    # VARIABLESS
-    slime_size = 50  # Tamaño del slime
-    slime_position = [50, conf.height // 2 - slime_size // 2]  # Posición del slime
-    slime_health = 100  # Vida Slime
-    enemies = []  # Variable de enemigos en pantalla
-    max_click_rate = 5  # Maximo de clicks por segundo
+    # user: Usuario = user_input.open()
+    shop_coins: int = 0 # Monedas de la tienda
 
     clock = pygame.time.Clock()
     click_timer = 0
 
     # LOGICA
     def game_logic():
-
+         
         pass
 
     #  Bucle del JUEGO
     running = True
     while running:
         running = not handle_events()  # Eventos registrados del programa
-        # MOUSE
-        mouse_pos = pygame.mouse.get_pos()  # Almacena la posición del mouse (x,y)
-        mouse_x = mouse_pos[0]  # Mouse_pos x
-        mouse_y = mouse_pos[1]  # Mouse_pos y
-
+      
         # ---- LOGICA
         game_logic()
+    
         # ---- LOGICA
 
-        screen.fill((200, 255, 200))  # Color del fondo
+        screen.fill((200, 255, 200, 0))  # Color del fondo
         custom_cursor.update()
         custom_cursor.draw()
 
@@ -78,13 +69,10 @@ def click():  # Lo que ocurre al hacer click
 
 def handle_events():  # Eventes & Updater
     for event in pygame.event.get():
-
-        # KEYBOARD
-        keysconf.keycontrols(this, event)
-
         # EXIT
         if event.type == pygame.QUIT:
-            return True  # Salir del bucle
+            return True  # Salir del bucle  
+        
     return False
 
 

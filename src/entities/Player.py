@@ -4,11 +4,13 @@ import math
 
 
 class Player(Entity):
-    def __init__(self, vida, rango, velocidad_ataque, x, y, size=50, element="Neutro"):
+
+    def __init__(self, x, y,size=50,vida=100,ataque=5,velocidad_ataque=5,rango=10, element="Neutro"):
         super().__init__(vida, x, y, size, element)
 
         self.image = self.load_image()
         self.rango = rango
+        self.ataque = ataque
         self.velocidad_ataque = velocidad_ataque
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
