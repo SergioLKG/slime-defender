@@ -1,5 +1,5 @@
 import json
-from src.entities import Player
+from src.entities.Player import *
 
 
 class Usuario:
