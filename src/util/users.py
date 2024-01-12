@@ -3,7 +3,7 @@ from src.entities import Player
 
 
 class Usuario:
-    def __init__(self, username, shop_coins=0, exp=0, slime=Player()):
+    def __init__(self, slime: Player, username, shop_coins=0, exp=0, ):
         self.file_path = "../data/users.json"
         self.username = username
         self.shop_coins: int = shop_coins
