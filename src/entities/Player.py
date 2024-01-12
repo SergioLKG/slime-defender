@@ -1,35 +1,49 @@
-from src.entities.Entity import Entity
 import pygame
-import math
+from src.entities.Entity import *
 
 
 class Player(Entity):
 
-    def __init__(self, x, y,size=50,vida=100,ataque=5,velocidad_ataque=5,rango=10, element="Neutro"):
-        super().__init__(vida, x, y, size, element)
+    def __init__(self, x, y, size=50, vida=100, ataque=5, velocidad_ataque=2, rango=10, element="neutro",
+                 effects: [] = None, coins=None):
+        super().__init__(x, y, size, element)
+        self.image = self.load_image("assets", "debug.png")
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
 
-        self.image = self.load_image()
+        # Misc
+        self.coins = coins
+
+        # Atributos
+        self.vida = vida
         self.rango = rango
         self.ataque = ataque
         self.velocidad_ataque = velocidad_ataque
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
         self.tiempo_ultimo_ataque = 0
+        self.effects = effects  # Lista de efectos activos
 
-    def load_image(self):
-        if self.element == "Neutro":
-            return pygame.image.load("../../assets/sprites/entities/player/neutro_sprite.png").convert_alpha()
-        elif self.element == "Fuego":
-            return pygame.image.load("../assets/sprites/fuego_sprite.png").convert_alpha()
-        elif self.element == "Agua":
-            return pygame.image.load("../assets/sprites/agua_sprite.png").convert_alpha()
-        elif self.element == "Hielo":
-            return pygame.image.load("../assets/sprites/hielo_sprite.png").convert_alpha()
-        elif self.element == "Tierra":
-            return pygame.image.load("../assets/sprites/tierra_sprite.png").convert_alpha()
+    def load_sprite(self):
+        if self.element == 'neutral':
+            self.load_image("debug.png", "assets")  # TODO cambiar png a slime_neutral
+        if self.element == 'fuego':
+            self.load_image("slime_fuego.png", "assets")
+        if self.element == 'agua':
+            self.load_image("slime_agua.png", "assets")
+        if self.element == 'tierra':
+            self.load_image("slime_tierra.png", "assets")
+        if self.element == 'hielo':
+            self.load_image("slime_hielo.png", "assets")
+
+    def draw_healthbar(self, screen):  # Barra de vida
+        barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - 10, self.barra_vida_ancho, self.barra_vida_alto)
+        pygame.draw.rect(screen, (255, 0, 0), barra_vida_rect, 0)
+        vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - 10,
+                                       max(0, int(self.barra_vida_ancho * (self.vida / 100))), self.barra_vida_alto)
+        pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect, 0)
 
     def morir(self):
-        print("¡El jugador ha muerto!")
+        print("Un jugador ha muerto!")
+        self.kill()
 
     def puede_atacar(self):
         tiempo_actual = pygame.time.get_ticks()
