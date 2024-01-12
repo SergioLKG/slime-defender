@@ -5,14 +5,11 @@ from src.entities.Entity import *
 class Player(Entity):
 
     def __init__(self, x, y, size=50, vida=100, ataque=5, velocidad_ataque=2, rango=10, element="neutro",
-                 effects: [] = None, coins=None):
+                 effects: [] = None):
         super().__init__(x, y, size, element)
         self.image = self.load_image("assets", "debug.png")
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
-
-        # Misc
-        self.coins = coins
 
         # Atributos
         self.vida = vida
