@@ -15,20 +15,20 @@ class Entity(pygame.sprite.Sprite):
         self.rect.topleft = (x, y)
 
         # Añadir atributos para la barra de vida
-        self.barra_vida_color = (0, 255, 0)  # Color verde
+        self.barra_vida_color = (255, 0, 0)  # Color rojo
         self.barra_vida_ancho = size
         self.barra_vida_alto = 5
 
     def tabla_tipos(self, cantidad, elemento_enemigo):
-        if self.element is "neutro":
+        if self.element == "neutro":
             cantidad = cantidad
         elif self.element == elemento_enemigo:
             cantidad //= 2  # Daño a la mitad elemento
-        elif elemento_enemigo is "agua" and self.element is "fuego":
+        elif elemento_enemigo == "agua" and self.element == "fuego":
             cantidad *= 2  # Daño x2 elemento
-        elif elemento_enemigo is "hielo" and self.element is "agua":
+        elif elemento_enemigo == "hielo" and self.element == "agua":
             cantidad *= 2  # Daño x2 elemento
-        elif elemento_enemigo is "tierra" and self.element is "hielo":
+        elif elemento_enemigo == "tierra" and self.element == "hielo":
             cantidad *= 2  # Daño x2 elemento
         return cantidad
 
