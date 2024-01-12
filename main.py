@@ -10,6 +10,7 @@ import pygame  # 2.5.2v
 import src.game_logic as gl
 from src.ui import user_input as userinp
 
+
 def main():
     pygame.init()
     gl.start_game()
