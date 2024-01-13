@@ -1,13 +1,12 @@
-import pygame
 from src.entities.Entity import *
 
 
 class Player(Entity):
 
-    def __init__(self, x, y, size=50, vida=100, ataque=5, velocidad_ataque=2, rango=10, element="neutro",
+    def __init__(self, x, y, size=(80, 80), vida=100, ataque=5, velocidad_ataque=2, rango=10, element="neutro",
                  effects: [] = None):
         super().__init__(x, y, size, element)
-        self.image = self.load_image("assets", "debug.png")
+        self.image = self.load_sprite()
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
@@ -20,16 +19,19 @@ class Player(Entity):
         self.effects = effects  # Lista de efectos activos
 
     def load_sprite(self):
-        if self.element == 'neutral':
-            self.load_image("debug.png", "assets")  # TODO cambiar png a slime_neutral
-        if self.element == 'fuego':
-            self.load_image("slime_fuego.png", "assets")
-        if self.element == 'agua':
-            self.load_image("slime_agua.png", "assets")
-        if self.element == 'tierra':
-            self.load_image("slime_tierra.png", "assets")
-        if self.element == 'hielo':
-            self.load_image("slime_hielo.png", "assets")
+        try:
+            if self.element == 'neutro':
+                return self.load_image("assets/sprites/entities/player", "slime_neutro.png")
+            if self.element == 'fuego':
+                return self.load_image("assets/sprites/entities/player", "slime_fuego.png")
+            if self.element == 'agua':
+                return self.load_image("assets/sprites/entities/player", "slime_agua.png")
+            if self.element == 'tierra':
+                return self.load_image("assets/sprites/entities/player", "slime_tierra.png")
+            if self.element == 'hielo':
+                return self.load_image("assets/sprites/entities/player", "slime_hielo.png")
+        except FileNotFoundError:
+            return self.load_image("assets", "debug.png")
 
     def draw_healthbar(self, screen):  # Barra de vida
         barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - 10, self.barra_vida_ancho, self.barra_vida_alto)

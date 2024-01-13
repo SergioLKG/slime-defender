@@ -1,6 +1,8 @@
 import pygame
-import src.util.gameconf as conf
+
 import src.controls.mouse as mouseconf
+import src.util.gameconf as conf
+
 
 def open():
     screen = conf.__sizescreen__()

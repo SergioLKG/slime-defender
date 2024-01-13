@@ -7,6 +7,7 @@ resistance or offensive against the enemies and become your
 own hero saving the world!"""
 # main.py
 import pygame  # 2.5.2v
+
 import src.game_logic as gl
 
 

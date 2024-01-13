@@ -1,7 +1,8 @@
-import pygame
+import json
 import sys
 import time
-import json
+
+import pygame
 
 
 class GameOverMenu:

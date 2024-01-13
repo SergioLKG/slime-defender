@@ -10,14 +10,11 @@ class Entity(pygame.sprite.Sprite):
         self.y = y
         self.size = size
         self.element = element
-        self.image = self.load_image("assets/entities", "debug.png")
+        self.image = self.load_image("assets", "debug.png")
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
-
-        # Añadir atributos para la barra de vida
-        self.barra_vida_color = (255, 0, 0)  # Color rojo
-        self.barra_vida_ancho = size
-        self.barra_vida_alto = 5
+        self.width = self.rect.width
+        self.height = self.rect.height
 
     def tabla_tipos(self, cantidad, elemento_enemigo):
         if self.element == "neutro":
@@ -33,13 +30,11 @@ class Entity(pygame.sprite.Sprite):
         return cantidad
 
     def load_image(self, directorio, nombre):
-        ruta = os.path.join(directorio, nombre)
         try:
-            image = pygame.image.load(ruta)
-            image = pygame.transform.scale(image, size=self.size)
-            return image.convert_alpha()
+            return pygame.transform.scale(pygame.image.load(os.path.join(directorio, nombre)),
+                                          size=self.size).convert_alpha()
         except FileNotFoundError:
-            print("Error! no se puede cargar la imagen")
+            return pygame.transform.scale(pygame.image.load("assets/debug.png"), size=self.size).convert_alpha()
 
     def recibir_dano(self, cantidad, elemento_enemigo="neutro"):
         pass  # Clase reemplazable
@@ -48,12 +43,12 @@ class Entity(pygame.sprite.Sprite):
         print("Una entidad ha muerto.")
         self.kill()
 
-    def atacar(self, objetivo):
-        pass
-
     def cambiar_elemento(self, nuevo_elemento):
         self.element = nuevo_elemento
-        self.image = self.load_image()
 
     def get_element(self):
         return self.element
+
+    def draw(self, screen):
+        screen.blit(self.image,
+                    (self.rect.x - (self.image.get_width() // 2), self.rect.y - self.image.get_width() // 2))
