@@ -18,6 +18,7 @@ class Gota(Enemy):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
+
     def morir(self):
         print("Ha muerto una Gota.")
         self.kill()

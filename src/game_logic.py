@@ -1,4 +1,5 @@
 # game_logic.py
+import random
 
 import src.controls.mouse as mouseconf
 import src.util.gameconf as conf
@@ -37,28 +38,26 @@ def start_game():
     click_timer = 0
 
     # Entities                               Menos el 20% del height
-    player = Player((width // 2), (height // 2 + (height * 0.2)), (80, 80))
+    player = Player((width // 2), (height // 2 + (height * 0.22)), (80, 80))
     enemies = pygame.sprite.Group()
-    enemy1 = Gota((width + 150), (height // 2 + (height * 0.2)), player)
-    enemy2 = Gota((width + 150), (height // 2 + (height * 0.2)), player)
-    enemies.add(enemy1, enemy2)
 
     # LOGICA
     def game_logic():
-        global next_enemy_time
-        current_time = pygame.time.get_ticks()
+        if len(enemies) < 4:
+            global next_enemy_time
 
-        # Crear un nuevo enemigo si ha pasado suficiente tiempo desde el último
-        if current_time > next_enemy_time:
-            enemy = Gota((width + 150), (height // 2 + (height * 0.2)), player)
-            enemies.add(enemy)
+            player.set_enemies(enemies)  # Decirle a player quienes son sus enemigos.
 
-            # Actualizar el tiempo para el próximo enemigo
-            next_enemy_time = current_time + enemy_cooldown
+            current_time = pygame.time.get_ticks()
+            r_height = random.Random.uniform(random.Random(), 0.21, 0.25)  # Altura aleatoria
 
-        # Dibujar y actualizar enemigos
-        enemies.draw(screen)
-        enemies.update()
+            # Crear un nuevo enemigo si ha pasado suficiente tiempo desde el último
+            if current_time > next_enemy_time:
+                enemy = Gota((width + 50), (height // 2 + (height * r_height)), player)
+                enemies.add(enemy)
+
+                # Actualizar el tiempo para el próximo enemigo
+                next_enemy_time = current_time + enemy_cooldown
 
     #  Bucle del JUEGO
     running = True
@@ -69,27 +68,17 @@ def start_game():
         # ---- LOGICA
         game_logic()
         # ---- LOGICA
-        player.draw(screen)
+        # Dibujar y actualizar sprites
         player.update()
+        player.draw(screen)
+        if len(enemies) > 0:  # Dibuja los enemigos, si hay
+            enemies.draw(screen)
+            enemies.update()
         custom_cursor.update()
         custom_cursor.draw()
 
         pygame.display.flip()  # Actualizar pantalla
         clock.tick(60)  # Felocidad de fotogramas
-
-
-def click():  # Lo que ocurre al hacer click
-    sumacoins = 5
-    ''' 
-    if modificador:
-        INGAME_COINS += 20
-    if modificador2:
-        INGAME_COINS += sumacoins * 2
-    else:
-        INGAME_COINS += sumacoins
-    :return:
-    '''
-    pass
 
 
 def cargar_bg(screen, path):

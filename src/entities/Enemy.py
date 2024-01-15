@@ -43,6 +43,8 @@ class Enemy(Entity):
 
     def recibir_dano(self, cantidad, elemento_enemigo="neutro"):
         self.vida -= self.tabla_tipos(cantidad, elemento_enemigo)
+        if self.vida <= 0:
+            self.morir()
 
     def morir(self):
         print("A muerto un enemigo!")
