@@ -73,4 +73,4 @@ def __resolutionscreen__():
 
 
 def __sizescreen__():
-    return  p.display.set_mode(__resolutionscreen__())
+    return p.display.set_mode(__resolutionscreen__())
