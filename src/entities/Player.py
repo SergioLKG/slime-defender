@@ -24,9 +24,10 @@ class Player(Entity):
         self.effects = effects  # Lista de efectos activos
 
         # Healthbar
-        self.barra_vida_color = (60, 200, 60)
-        self.barra_vida_ancho = self.rect.width * 0.80
-        self.barra_vida_alto = self.rect.height * 0.16
+        self.barra_vida_color = (60, 160, 60)
+        self.barra_vida_inactiva = (20, 80, 20)
+        self.barra_vida_ancho = self.rect.width * 1
+        self.barra_vida_alto = self.rect.height * 0.20
 
     def load_sprite(self):
         try:
@@ -44,22 +45,29 @@ class Player(Entity):
             return self.load_image("assets", "debug.png")
 
     def draw_healthbar(self, screen):  # Barra de vida
+        vida_maxima = int(self.vida)
+        vida_actual = min(0, vida_maxima)
+
+        vida_actual_rect = pygame.Rect(self.rect.x - self.rect.width // 2, self.rect.y - (self.rect.height - 10),
+                                       vida_maxima - vida_actual - (self.rect.width // 4), self.barra_vida_alto)
+
         barra_vida_rect = pygame.Rect(self.rect.x - self.rect.width // 2, self.rect.y - (self.rect.height - 10),
                                       self.barra_vida_ancho,
                                       self.barra_vida_alto)
-        pygame.draw.rect(screen, (255, 0, 0), barra_vida_rect, 0)
-        vida_actual_rect = pygame.Rect(self.rect.x - self.rect.width // 2, self.rect.y - (self.rect.height - 10),
-                                       max(0, int(self.barra_vida_ancho * (self.vida / 100))), self.barra_vida_alto)
-        pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect, 0)
+        pygame.draw.rect(screen, self.barra_vida_inactiva, barra_vida_rect, 0)
 
-    def morir(self):
-        print("Un jugador ha muerto!")
-        self.kill()
+        pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect, 0)
+        # Dibujar el número de puntuación dentro de la barra de vida
+        txtSize = 20
+        texto_puntuacion = pygame.font.Font(None, txtSize).render(str(self.vida), True, (255, 255, 255))
+        screen.blit(texto_puntuacion,
+                    (self.rect.x - txtSize // 2,
+                     self.rect.y - (self.rect.height - (txtSize - self.barra_vida_alto // 2))))
 
     def puede_atacar(self):
         tiempo_actual = pygame.time.get_ticks()
         tiempo_transcurrido_desde_ataque = tiempo_actual - self.tiempo_ultimo_ataque
-        return tiempo_transcurrido_desde_ataque >= 1000 / self.velocidad_ataque
+        return tiempo_transcurrido_desde_ataque >= 10000 / (self.velocidad_ataque * 10)
 
     def esta_en_rango(self, enemigo):
         distancia = abs(enemigo.rect.x - self.rect.x)
@@ -70,16 +78,25 @@ class Player(Entity):
             for enemigo in self.enemies:
                 if isinstance(enemigo, src.entities.Enemy.Enemy):
                     if self.esta_en_rango(enemigo):
-                        print("Player ataca a ", enemigo)
+                        print(f"{self} ataca a {enemigo}")
                         enemigo.recibir_dano(self.calc_dmg())
                         self.tiempo_ultimo_ataque = pygame.time.get_ticks()
                 else:
                     print("No atacaré a inocentes.")
 
+    def recibir_dano(self, cantidad, elemento_enemigo="neutro"):
+        self.vida -= self.tabla_tipos(cantidad, elemento_enemigo)
+        if self.vida <= 0:
+            self.morir()
+
+    def morir(self):
+        print("Un jugador ha muerto!")
+        self.kill()
+
     def calc_dmg(self):
-        daño = self.ataque
+        dmg = self.ataque
         # Añadir powerups etc
-        return daño
+        return dmg
 
     def set_enemies(self, enemies):
         self.enemies = enemies
