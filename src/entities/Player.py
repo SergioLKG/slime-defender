@@ -45,7 +45,7 @@ class Player(Entity):
         except FileNotFoundError:
             return self.load_image("assets", "debug.png")
 
-    def draw_healthbar(self, screen):  # Barra de vida (Sobreescribir si es necesario)
+    def draw_healthbar(self, screen):  # Barra de vida (Sobreescribir si es necesario).
         vida_maxima = int(self.vida)
         vida_actual = min(0, vida_maxima)
 
