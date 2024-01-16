@@ -1,5 +1,6 @@
 import pygame
 
+import src.entities.Player
 from src.entities.Entity import Entity
 
 
@@ -18,35 +19,38 @@ class Enemy(Entity):
         # Healthbar
         self.barra_vida_color = (160, 60, 60)
         self.barra_vida_inactiva = (80, 20, 20)
-        self.barra_vida_ancho = self.rect.width * 1
+        self.barra_vida_ancho = self.rect.width
         self.barra_vida_alto = self.rect.height * 0.20
 
     def draw_healthbar(self, screen):  # Barra de vida
         vida_maxima = int(self.vida)
         vida_actual = min(0, vida_maxima)
 
-        vida_actual_rect = pygame.Rect(self.rect.x - self.rect.width // 2, self.rect.y - (self.rect.height - 10),
-                                       vida_maxima - vida_actual - (self.rect.width // 4), self.barra_vida_alto)
+        vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - (self.rect.height // 2) + 10,
+                                       (vida_maxima - vida_actual) * 2.5,
+                                       self.barra_vida_alto)
 
-        barra_vida_rect = pygame.Rect(self.rect.x - self.rect.width // 2, self.rect.y - (self.rect.height - 10),
+        barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - (self.rect.height // 2) + 10,
                                       self.barra_vida_ancho,
                                       self.barra_vida_alto)
+
         pygame.draw.rect(screen, self.barra_vida_inactiva, barra_vida_rect, 0)
 
         pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect, 0)
-        # Dibujar el número de puntuación dentro de la barra de vida
-        txtSize = 18
-        texto_puntuacion = pygame.font.Font(None, txtSize).render(str(self.vida), True, (255, 255, 255))
-        screen.blit(texto_puntuacion,
-                    (self.rect.x - txtSize // 2,
-                     self.rect.y - (self.rect.height - (txtSize - self.barra_vida_alto // 2))))
+        # Dibujar numero de la vida actual
+        # txt_size = 16
+        # texto_puntuacion = pygame.font.Font(None, txt_size).render(str(self.vida), True, (255, 255, 255))
+        # screen.blit(texto_puntuacion,
+        #             (barra_vida_rect.x - texto_puntuacion.get_width() // 2 + barra_vida_rect.width // 2,
+        #              barra_vida_rect.y - texto_puntuacion.get_height() // 2 + barra_vida_rect.height // 2))
 
-    def atacar(self):
-        if self.puede_atacar():
-            if self.esta_en_rango():
-                print(f"{self} golpea a {self.objetivo}")
-                self.tiempo_ultimo_ataque = 0
-                self.objetivo.recibir_dano(self.calc_dmg())
+    def atacar(self, enemigo):
+        if self.esta_en_rango(enemigo):
+            if enemigo.alive() and self.esta_en_rango(enemigo):
+                if self.puede_atacar():
+                    print(f"{self} golpea a {enemigo}")
+                    enemigo.recibir_dano(self.calc_dmg())
+                    self.tiempo_ultimo_ataque = pygame.time.get_ticks()
 
     def calc_dmg(self):
         dmg = self.ataque
@@ -54,13 +58,12 @@ class Enemy(Entity):
         return dmg
 
     def puede_atacar(self):
-        if self.esta_en_rango():
-            tiempo_actual = pygame.time.get_ticks()
-            tiempo_transcurrido_desde_ataque = tiempo_actual - self.tiempo_ultimo_ataque
-            return tiempo_transcurrido_desde_ataque >= 100000 / (self.velocidad_ataque * 10)
+        tiempo_actual = pygame.time.get_ticks()
+        tiempo_transcurrido_desde_ataque = tiempo_actual - self.tiempo_ultimo_ataque
+        return tiempo_transcurrido_desde_ataque >= 15000 / (self.velocidad_ataque * 10)
 
-    def esta_en_rango(self):
-        distancia = abs(self.objetivo.rect.x - self.rect.x)
+    def esta_en_rango(self, objetivo):
+        distancia = abs(objetivo.rect.x - self.rect.x)
         return distancia <= self.rango
 
     def recibir_dano(self, cantidad, elemento_enemigo="neutro"):
@@ -78,11 +81,12 @@ class Enemy(Entity):
         self.draw_healthbar(screen)
 
     def update(self):
-        if not self.objetivo.alive():  # Si player NO esta vivo
-            # TODDO dance (por ejemplo)
-            pass
-
-        if self.esta_en_rango():
-            self.atacar()
-        else:
-            self.rect.x -= self.velocidad  # moverse a la izquierda
+        for enemigo in self.objetivo:
+            if not enemigo.alive():  # Si player NO esta vivo
+                # TODDO dance (por ejemplo)
+                pass
+            if self.esta_en_rango(enemigo):
+                self.atacar(enemigo)
+            else:
+                if enemigo.alive():
+                    self.rect.x -= self.velocidad  # moverse a la izquierda

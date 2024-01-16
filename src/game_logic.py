@@ -2,20 +2,17 @@
 import random
 
 import src.controls.mouse as mouseconf
+import src.entities.Group
 import src.util.gameconf as conf
 from src.entities.enemies.Gota import Gota
 from src.util.users import *
-
-
-def __init__():
-    pass
-
 
 # GLOBALS
 # ENEMIES
 enemy_cooldown = 2000  # en milisegundos (2 segundos)
 current_time = pygame.time.get_ticks()
 next_enemy_time = current_time + enemy_cooldown
+generados = 0
 
 
 def start_game():
@@ -38,12 +35,15 @@ def start_game():
     click_timer = 0
 
     # Entities                               Menos el 20% del height
-    player = Player((width // 2), (height // 2 + (height * 0.22)), (80, 80))
-    enemies = pygame.sprite.Group()
+    player = Player((width // 2 - 40), (height // 2 - 40 + (height * 0.22)), (80, 80))
+    allies = src.entities.Group.Group(screen)
+    allies.add(player)
+    enemies = src.entities.Group.Group(screen)
 
     # LOGICA
     def game_logic():
-        if len(enemies) < 4:
+        global generados
+        if generados < 4:
             global next_enemy_time
 
             player.set_enemies(enemies)  # Decirle a player quienes son sus enemigos.
@@ -53,11 +53,17 @@ def start_game():
 
             # Crear un nuevo enemigo si ha pasado suficiente tiempo desde el último
             if current_time > next_enemy_time:
-                enemy = Gota((width + 50), (height // 2 + (height * r_height)), player)
+                enemy = Gota((width + 100), (height // 2 + (height * r_height)), allies)
                 enemies.add(enemy)
+                generados += 1
 
                 # Actualizar el tiempo para el próximo enemigo
                 next_enemy_time = current_time + enemy_cooldown
+        elif len(enemies) <= 0:
+            txt_size = 47
+            ganaste_txt = (pygame.font.Font(None, txt_size)
+                           .render("ENHORABUENA HAS GANADO", True, (250, 250, 250), (0, 0, 0)))
+            screen.blit(ganaste_txt, (screen.get_width() // 2 - ganaste_txt.get_width() // 2, screen.get_height() // 2))
 
     #  Bucle del JUEGO
     running = True
@@ -69,8 +75,8 @@ def start_game():
         game_logic()
         # ---- LOGICA
         # Dibujar y actualizar sprites
-        player.update()
-        player.draw(screen)
+        allies.draw(screen)  # Player, estructuras aliadas etc
+        allies.update()
         if len(enemies) > 0:  # Dibuja los enemigos, si hay
             enemies.draw(screen)
             enemies.update()

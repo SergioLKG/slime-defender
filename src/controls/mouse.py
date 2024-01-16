@@ -6,11 +6,12 @@ cursor_path = "assets/ui/cursor.png"
 
 class Cursor:
     def __init__(self):
-        self.spr = pygame.transform.scale(pygame.image.load(cursor_path), (24, 24))
+        self.size = 35
+        self.spr = pygame.transform.scale(pygame.image.load(cursor_path), (self.size, self.size))
         self.root = pygame.display.get_surface()
         self.x = 0
         self.y = 0
-        self.rect = pygame.rect.Rect(self.x, self.y, 24, 24)
+        self.rect = pygame.rect.Rect(self.x, self.y, self.size, self.size)
 
     def draw(self):
         self.root.blit(self.spr, (self.x, self.y))
@@ -18,4 +19,4 @@ class Cursor:
     def update(self):
         self.x = pygame.mouse.get_pos()[0] - 6
         self.y = pygame.mouse.get_pos()[1]
-        self.rect = pygame.rect.Rect(self.x, self.y, 24, 24)
+        self.rect = pygame.rect.Rect(self.x, self.y, self.size, self.size)
