@@ -13,9 +13,6 @@ class Player(Entity):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
-        self.alive()
-        self.enemies = None
-
         # Atributos
         self.vida = vida
         self.rango = rango
@@ -97,9 +94,6 @@ class Player(Entity):
         dmg = self.ataque
         # Añadir powerups etc
         return dmg
-
-    def set_enemies(self, enemies):
-        self.enemies = enemies
 
     def draw(self, screen):
         super().draw(screen)

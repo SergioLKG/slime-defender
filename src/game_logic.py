@@ -7,13 +7,6 @@ import src.util.gameconf as conf
 from src.entities.enemies.Gota import Gota
 from src.util.users import *
 
-# GLOBALS
-# ENEMIES
-enemy_cooldown = 2000  # en milisegundos (2 segundos)
-current_time = pygame.time.get_ticks()
-next_enemy_time = current_time + enemy_cooldown
-generados = 0
-
 
 def start_game():
     ##############################

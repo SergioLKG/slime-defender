@@ -5,10 +5,10 @@ from src.entities.Entity import Entity
 
 
 class Enemy(Entity):
-    def __init__(self, x, y, size, objetivo, vida, ataque, velocidad, velocidad_ataque, rango, element="agua"):
+    def __init__(self, x, y, size, enemies, vida, ataque, velocidad, velocidad_ataque, rango, element="agua"):
         super().__init__(x, y, size, element)
 
-        self.objetivo = objetivo
+        self.enemies = enemies
         self.vida = vida
         self.ataque = ataque
         self.velocidad = velocidad
@@ -81,7 +81,7 @@ class Enemy(Entity):
         self.draw_healthbar(screen)
 
     def update(self):
-        for enemigo in self.objetivo:
+        for enemigo in self.enemies:
             if not enemigo.alive():  # Si player NO esta vivo
                 # TODDO dance (por ejemplo)
                 pass

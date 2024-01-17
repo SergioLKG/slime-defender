@@ -15,6 +15,7 @@ class Entity(pygame.sprite.Sprite):
         self.rect.topleft = (x, y)
         self.width = self.rect.width
         self.height = self.rect.height
+        self.enemies = None  # Lista de objetivos
 
     def tabla_tipos(self, cantidad, elemento_enemigo):
         if self.element == "neutro":
@@ -52,3 +53,6 @@ class Entity(pygame.sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.image,
                     (self.rect.x - (self.image.get_width() // 2), self.rect.y - self.image.get_width() // 2))
+
+    def set_enemies(self, enemies):
+        self.enemies = enemies
