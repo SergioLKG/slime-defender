@@ -19,7 +19,7 @@ class Player(Entity):
         self.ataque = ataque
         self.velocidad_ataque = velocidad_ataque
         self.tiempo_ultimo_ataque = 0
-        self.effects = effects  # Lista de efectos activos
+        self.effects: [Effect] = effects  # Lista de efectos activos
 
         # Healthbar
         self.barra_vida_color = (60, 160, 60)
@@ -94,6 +94,14 @@ class Player(Entity):
         dmg = self.ataque
         # Añadir powerups etc
         return dmg
+
+    def add_effect(self, effect: Effect):
+        self.effects.add(effect)
+
+    def cargar_effects(self):  # Update Effects
+        if self.effects is not None:
+            for effect in self.effects:
+                effect.cargar()
 
     def draw(self, screen):
         super().draw(screen)
