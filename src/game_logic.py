@@ -6,6 +6,7 @@ import src.util.gameconf as conf
 from src.entities.enemies.Gota import Gota
 from src.util.WaveBuilder import WaveBuilder
 from src.util.users import *
+from src.effects.BuffVida import BuffVida
 
 
 def start_game():
@@ -29,6 +30,9 @@ def start_game():
 
     # Entities                               Menos el 20% del height
     player = Player((width // 2 - 40), (height // 2 - 40 + (height * 0.22)), (80, 80))
+    player.add_effect(BuffVida(2))
+    player.cargar_effects()
+
     allies = src.entities.Group.Group(screen)
     allies.add(player)
 

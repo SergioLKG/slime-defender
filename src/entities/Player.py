@@ -7,8 +7,10 @@ from src.util.Effect import Effect
 class Player(Entity):
 
     def __init__(self, x, y, size=(80, 80), vida=100, ataque=5, velocidad_ataque=2, rango=200, element="neutro",
-                 effects: [Effect] = None):
+                 effects=None):
         super().__init__(x, y, size, element)
+        if effects is None:
+            effects = []
         self.image = self.load_sprite()
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
@@ -96,12 +98,14 @@ class Player(Entity):
         return dmg
 
     def add_effect(self, effect: Effect):
-        self.effects.add(effect)
+        x: list = self.effects
+        x.append(effect)
+        self.effects = x
 
     def cargar_effects(self):  # Update Effects
-        if self.effects is not None:
-            for effect in self.effects:
-                effect.cargar()
+        for effect in self.effects:
+            if self.effects is not None:
+                effect.cargar(self)
 
     def draw(self, screen):
         super().draw(screen)
