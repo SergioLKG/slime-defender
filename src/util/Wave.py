@@ -6,9 +6,9 @@ from src.entities.enemies.Gota import Gota
 
 
 class Wave:
-    def __init__(self, screen, player, num_enemies, enemy_cooldown, enemy_types=None):
+    def __init__(self, screen, allies, num_enemies, enemy_cooldown, enemy_types=None):
         self.screen = screen
-        self.player = player
+        self.allies = allies
         self.num_enemies = num_enemies
         self.enemy_cooldown = enemy_cooldown
         self.enemy_types = enemy_types or [Gota]  # Lista de clases de enemigos
@@ -26,7 +26,7 @@ class Wave:
                 r_height = random.uniform(0.21, 0.25)
                 enemy = enemy_type((self.screen.get_width() + 100),
                                    (self.screen.get_height() // 2 + (self.screen.get_height() * r_height)),
-                                   self.player)
+                                   self.allies)
                 self.enemies.add(enemy)
                 self.generated += 1
                 self.next_enemy_time = current_time + self.enemy_cooldown
@@ -38,3 +38,9 @@ class Wave:
 
     def draw(self):
         self.enemies.draw(self.screen)
+
+    def get_enemies(self):
+        return self.enemies
+
+    def get_allies(self):
+        return self.allies

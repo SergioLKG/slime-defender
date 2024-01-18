@@ -5,6 +5,7 @@ import src.controls.mouse as mouseconf
 import src.entities.Group
 import src.util.gameconf as conf
 from src.entities.enemies.Gota import Gota
+from src.util.WaveBuilder import WaveBuilder
 from src.util.users import *
 
 
@@ -31,32 +32,19 @@ def start_game():
     player = Player((width // 2 - 40), (height // 2 - 40 + (height * 0.22)), (80, 80))
     allies = src.entities.Group.Group(screen)
     allies.add(player)
-    enemies = src.entities.Group.Group(screen)
+
+    # Waves
+    wave_config = {"num_enemies": 4, "enemy_cooldown": 2000, "enemy_type": [Gota]}
+    current_wave = WaveBuilder.build_wave(screen, allies, wave_config)
+    allies.set_enemies(current_wave.get_enemies())
 
     # LOGICA
     def game_logic():
-        global generados
-        if generados < 4:
-            global next_enemy_time
-
-            player.set_enemies(enemies)  # Decirle a player quienes son sus enemigos.
-
-            current_time = pygame.time.get_ticks()
-            r_height = random.Random.uniform(random.Random(), 0.21, 0.25)  # Altura aleatoria
-
-            # Crear un nuevo enemigo si ha pasado suficiente tiempo desde el último
-            if current_time > next_enemy_time:
-                enemy = Gota((width + 100), (height // 2 + (height * r_height)), allies)
-                enemies.add(enemy)
-                generados += 1
-
-                # Actualizar el tiempo para el próximo enemigo
-                next_enemy_time = current_time + enemy_cooldown
-        elif len(enemies) <= 0:
-            txt_size = 47
-            ganaste_txt = (pygame.font.Font(None, txt_size)
-                           .render("ENHORABUENA HAS GANADO", True, (250, 250, 250), (0, 0, 0)))
-            screen.blit(ganaste_txt, (screen.get_width() // 2 - ganaste_txt.get_width() // 2, screen.get_height() // 2))
+        if current_wave.is_completed():
+            # Ganaste o lo que sea
+            screen.blit(
+                (pygame.font.Font(None, 74).render(str("¡Enhorabuena ganaste!"), 1, (255, 255, 255), (0, 0, 0))),
+                (screen.get_width() // 2, screen.get_height() // 2))
 
     #  Bucle del JUEGO
     running = True
@@ -70,10 +58,9 @@ def start_game():
         # Dibujar y actualizar sprites
         allies.draw(screen)  # Player, estructuras aliadas etc
         allies.update()
-        if len(enemies) > 0:  # Dibuja los enemigos, si hay
-            enemies.draw(screen)
-            enemies.update()
-        custom_cursor.update()
+        current_wave.draw()  # Enemies Wave
+        current_wave.update()
+        custom_cursor.update()  # Cursor pointer
         custom_cursor.draw()
 
         pygame.display.flip()  # Actualizar pantalla
