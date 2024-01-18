@@ -1,5 +1,3 @@
-import pygame.sprite
-
 from src.entities.Enemy import Enemy
 
 

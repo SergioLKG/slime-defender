@@ -1,5 +1,4 @@
 # game_logic.py
-import random
 
 import src.controls.mouse as mouseconf
 import src.entities.Group

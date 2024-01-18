@@ -1,13 +1,13 @@
 import pygame.sprite
 
-import src.entities.Enemy
 from src.entities.Entity import *
+from src.util.Effect import Effect
 
 
 class Player(Entity):
 
     def __init__(self, x, y, size=(80, 80), vida=100, ataque=5, velocidad_ataque=2, rango=200, element="neutro",
-                 effects: [] = None):
+                 effects: [Effect] = None):
         super().__init__(x, y, size, element)
         self.image = self.load_sprite()
         self.rect = self.image.get_rect()

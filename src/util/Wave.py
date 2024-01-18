@@ -1,5 +1,6 @@
-import pygame
 import random
+
+import pygame
 
 from src.entities.Group import Group
 from src.entities.enemies.Gota import Gota

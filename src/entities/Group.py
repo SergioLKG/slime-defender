@@ -1,8 +1,8 @@
 import pygame
 
+import src.entities.Enemy
 import src.entities.Entity
 import src.entities.Player
-import src.entities.Enemy
 
 
 class Group(pygame.sprite.Group):

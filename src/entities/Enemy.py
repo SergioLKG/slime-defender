@@ -1,6 +1,5 @@
 import pygame
 
-import src.entities.Player
 from src.entities.Entity import Entity
 
 
