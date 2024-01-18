@@ -5,11 +5,12 @@ from src.entities.Player import Player
 class BuffVida(Effect):
 
     def __init__(self, tier):
+        self.tier = tier
+        self.hpsum = 50
         name = "buff_hp"
         categoria = "slime"
         precio = self.calc_precio(200)  # Poner precio minimo
         super().__init__(name, precio, tier, categoria)
-        self.hpsum = 50
 
     def cargar(self, player: Player):
         if self.tier > 3:
