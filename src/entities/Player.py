@@ -82,6 +82,8 @@ class Player(Entity):
                     if self.puede_atacar():
                         print(f"{self} ataca a {enemigo}")
                         enemigo.recibir_dano(self.calc_dmg())
+                        porcent = (self.robo_vida / 100)
+                        self.vida += int(max(0, enemigo.tabla_tipos(self.calc_dmg(), enemigo.element) * porcent))
                         self.tiempo_ultimo_ataque = pygame.time.get_ticks()
 
     def recibir_dano(self, cantidad, elemento_enemigo="neutro"):
@@ -115,4 +117,6 @@ class Player(Entity):
         self.draw_healthbar(screen)
 
     def update(self):
+        if self.vida > self.vida_maxima:
+            self.vida = self.vida_maxima
         self.atacar()

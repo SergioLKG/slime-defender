@@ -9,13 +9,16 @@ class BuffAttack(Effect):
         self.dmgsum = 25  # Ataque añadido
         name = "buff_attack"
         categoria = "slime"
-        precio = self.calc_precio(300)  # Poner precio minimo
+        precio = self.calc_precio(500)  # Poner precio minimo
         super().__init__(name, precio, tier, categoria)
 
     def cargar(self, player: Player):
+        player.ataque += self.calculate()
+
+    def calculate(self):
         if self.tier > 3:
-            player.ataque += (self.dmgsum * (self.tier * 1.20))
-        player.ataque += (self.dmgsum * self.tier)
+            return self.dmgsum * (self.tier * 1.20)
+        return self.dmgsum * self.tier
 
     def calc_precio(self, precio):
         return super().calc_precio(precio)
