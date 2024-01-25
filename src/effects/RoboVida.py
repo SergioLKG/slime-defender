@@ -2,14 +2,14 @@ from src.entities.Player import Player
 from src.util.Effect import Effect
 
 
-class BuffVida(Effect):
+class RoboVida(Effect):
 
     def __init__(self, tier):
         self.tier = tier
         self.hpsum = 50
-        name = "buff_hp"
+        name = "hp_steal"
         categoria = "slime"
-        precio = self.calc_precio(200)  # Poner precio minimo
+        precio = self.calc_precio(100)  # Poner precio minimo
         super().__init__(name, precio, tier, categoria)
 
     def cargar(self, player: Player):

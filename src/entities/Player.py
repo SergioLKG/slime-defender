@@ -23,6 +23,7 @@ class Player(Entity):
         self.velocidad_ataque = velocidad_ataque
         self.tiempo_ultimo_ataque = 0
         self.effects: [Effect] = effects  # Lista de efectos activos
+        self.robo_vida = 0
 
         # Healthbar
         self.barra_vida_color = (60, 160, 60)
