@@ -16,6 +16,7 @@ class Player(Entity):
         self.rect.topleft = (x, y)
 
         # Atributos
+        self.vida_maxima = vida
         self.vida = vida
         self.rango = rango
         self.ataque = ataque
@@ -26,8 +27,28 @@ class Player(Entity):
         # Healthbar
         self.barra_vida_color = (60, 160, 60)
         self.barra_vida_inactiva = (20, 80, 20)
-        self.barra_vida_ancho = self.rect.width * 1
+        self.barra_vida_ancho = self.rect.width
         self.barra_vida_alto = self.rect.height * 0.20
+
+    def draw_healthbar(self, screen):  # Barra de vida
+        vida_proporcion = self.vida / self.vida_maxima
+
+        ancho_vida_proporcional = self.barra_vida_ancho * vida_proporcion
+
+        barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.barra_vida_ancho, self.barra_vida_alto)
+
+        vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - 20, ancho_vida_proporcional, self.barra_vida_alto)
+
+        # Dibuja la barra de vida
+        pygame.draw.rect(screen, self.barra_vida_inactiva, barra_vida_rect)  # Fondo barra
+        pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect)  # Barra de vida
+
+        # Contador numerico vida
+        txt_size = 20
+        texto_puntuacion = pygame.font.Font(None, txt_size).render(str(int(self.vida)), True, (255, 255, 255))
+        screen.blit(texto_puntuacion,
+                    (barra_vida_rect.x - texto_puntuacion.get_width() // 2 + barra_vida_rect.width // 2,
+                     barra_vida_rect.y - texto_puntuacion.get_height() // 2 + barra_vida_rect.height // 2))
 
     def load_sprite(self):
         try:
@@ -43,26 +64,6 @@ class Player(Entity):
                 return self.load_image("assets/sprites/entities/player", "slime_hielo.png")
         except FileNotFoundError:
             return self.load_image("assets", "debug.png")
-
-    def draw_healthbar(self, screen):  # Barra de vida (Sobreescribir si es necesario).
-        vida_maxima = int(self.vida)
-        vida_actual = min(0, vida_maxima)
-
-        vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - (self.rect.height // 2) + 10,
-                                       (vida_maxima - vida_actual) * (self.width / 100), self.barra_vida_alto)
-
-        barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - (self.rect.height // 2) + 10,
-                                      self.barra_vida_ancho,
-                                      self.barra_vida_alto)
-        pygame.draw.rect(screen, self.barra_vida_inactiva, barra_vida_rect, 0)
-
-        pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect, 0)
-        # Dibujar el número de puntuación dentro de la barra de vida
-        txt_size = 20
-        texto_puntuacion = pygame.font.Font(None, txt_size).render(str(self.vida), True, (255, 255, 255))
-        screen.blit(texto_puntuacion,
-                    (barra_vida_rect.x - texto_puntuacion.get_width() // 2 + barra_vida_rect.width // 2,
-                     barra_vida_rect.y - texto_puntuacion.get_height() // 2 + barra_vida_rect.height // 2))
 
     def puede_atacar(self):
         tiempo_actual = pygame.time.get_ticks()
@@ -84,7 +85,8 @@ class Player(Entity):
 
     def recibir_dano(self, cantidad, elemento_enemigo="neutro"):
         if self.vida > 0:
-            self.vida -= self.tabla_tipos(cantidad, elemento_enemigo)
+            self.vida = max(0, self.vida - self.tabla_tipos(cantidad, elemento_enemigo))
+            print(f"{self} recibe daño")
         else:
             self.morir()
 

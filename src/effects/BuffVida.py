@@ -14,8 +14,8 @@ class BuffVida(Effect):
 
     def cargar(self, player: Player):
         if self.tier > 3:
-            player.vida += (self.hpsum * self.tier * 1.20)
-        player.vida += (self.hpsum * self.tier)
+            player.vida_maxima += (self.hpsum * self.tier * 1.20)
+        player.vida_maxima += (self.hpsum * self.tier)
 
     def calc_precio(self, precio):
         return super().calc_precio(precio)

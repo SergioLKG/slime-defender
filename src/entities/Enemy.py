@@ -7,13 +7,15 @@ class Enemy(Entity):
     def __init__(self, x, y, size, enemies, vida, ataque, velocidad, velocidad_ataque, rango, element="agua"):
         super().__init__(x, y, size, element)
 
-        self.enemies = enemies
+        # Atributos
+        self.vida_maxima = vida
         self.vida = vida
         self.ataque = ataque
         self.velocidad = velocidad
         self.velocidad_ataque = velocidad_ataque
         self.rango = rango
         self.tiempo_ultimo_ataque = 0
+        self.enemies = enemies
 
         # Healthbar
         self.barra_vida_color = (160, 60, 60)
@@ -22,20 +24,18 @@ class Enemy(Entity):
         self.barra_vida_alto = self.rect.height * 0.20
 
     def draw_healthbar(self, screen):  # Barra de vida
-        vida_maxima = int(self.vida)
-        vida_actual = min(0, vida_maxima)
+        vida_proporcion = self.vida / self.vida_maxima
 
-        vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - (self.rect.height // 2) + 10,
-                                       (vida_maxima - vida_actual) * 2.5,
-                                       self.barra_vida_alto)
+        ancho_vida_proporcional = self.barra_vida_ancho * vida_proporcion
 
-        barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - (self.rect.height // 2) + 10,
-                                      self.barra_vida_ancho,
-                                      self.barra_vida_alto)
+        barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.barra_vida_ancho, self.barra_vida_alto)
 
-        pygame.draw.rect(screen, self.barra_vida_inactiva, barra_vida_rect, 0)
+        vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - 20, ancho_vida_proporcional, self.barra_vida_alto)
 
-        pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect, 0)
+        # Dibuja la barra de vida
+        pygame.draw.rect(screen, self.barra_vida_inactiva, barra_vida_rect)  # Fondo barra
+        pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect)  # Barra de vida
+
         # Dibujar numero de la vida actual
         # txt_size = 16
         # texto_puntuacion = pygame.font.Font(None, txt_size).render(str(self.vida), True, (255, 255, 255))
@@ -66,9 +66,10 @@ class Enemy(Entity):
         return distancia <= self.rango
 
     def recibir_dano(self, cantidad, elemento_enemigo="neutro"):
-        print(f"{self} esta recibiendo daño")
-        self.vida -= self.tabla_tipos(cantidad, elemento_enemigo)
-        if self.vida <= 0:
+        if self.vida > 0:
+            self.vida = max(0, self.vida - self.tabla_tipos(cantidad, elemento_enemigo))
+            print(f"{self} recibe daño")
+        else:
             self.morir()
 
     def morir(self):

@@ -4,7 +4,7 @@ from src.entities.Entity import Entity
 class Effect:
 
     # Categorias: Miscelanea(misc), Armas(weapon), Armaduras(armor), Mouse(mouse), Slime(slime)
-    def __init__(self, name, precio=0, tier=0, categoria="misc"):
+    def __init__(self, name, precio, tier, categoria):
         self.name = name
         self.tier = tier
         self.categoria = categoria

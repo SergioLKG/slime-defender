@@ -3,6 +3,7 @@
 import src.controls.mouse as mouseconf
 import src.entities.Group
 import src.util.gameconf as conf
+from src.effects.Heal import Heal
 from src.entities.enemies.Gota import Gota
 from src.util.WaveBuilder import WaveBuilder
 from src.util.users import *
@@ -32,6 +33,7 @@ def start_game():
     player = Player((width // 2 - 40), (height // 2 - 40 + (height * 0.22)), (80, 80))
     player.add_effect(BuffVida(2))
     player.cargar_effects()
+    player.vida = player.vida_maxima  # Curamos al player para que empiece con toda la vida
 
     allies = src.entities.Group.Group(screen)
     allies.add(player)
@@ -45,9 +47,10 @@ def start_game():
     def game_logic():
         if current_wave.is_completed():
             # Ganaste o lo que sea
-            screen.blit(
-                (pygame.font.Font(None, 74).render(str("¡Enhorabuena ganaste!"), 1, (255, 255, 255), (0, 0, 0))),
-                (screen.get_width() // 2, screen.get_height() // 2))
+            font = pygame.font.Font(None, 74).render(str("¡Enhorabuena ganaste!"), 1, (255, 255, 255))
+            screen.blit(font, (
+                (screen.get_width() // 2) - (font.get_width() // 2),
+                (screen.get_height() // 2) - (font.get_height() // 2)))
 
     #  Bucle del JUEGO
     running = True
