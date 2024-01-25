@@ -1,4 +1,5 @@
 # game_logic.py
+import pygame.draw
 
 import src.controls.mouse as mouseconf
 import src.entities.Group
@@ -8,6 +9,10 @@ from src.entities.enemies.Gota import Gota
 from src.util.WaveBuilder import WaveBuilder
 from src.util.users import *
 from src.effects.BuffVida import BuffVida
+
+# Globals
+shop_coins: int = 0  # Monedas de la tienda
+aquafragments: int = 0  # Monedas en partida
 
 
 def start_game():
@@ -24,7 +29,6 @@ def start_game():
     pygame.mouse.set_visible(0)  # Mouse Disable (Usando Custom -> controls\mouse.py)
     ##############################
     # user: Usuario = user_input.open()
-    shop_coins: int = 0  # Monedas de la tienda
 
     clock = pygame.time.Clock()
     click_timer = 0
@@ -43,8 +47,19 @@ def start_game():
     current_wave = WaveBuilder.build_wave(screen, allies, wave_config)
     allies.set_enemies(current_wave.get_enemies())
 
-    # LOGICA
-    def game_logic():
+    # Interfaz
+    interfaz_rect = pygame.Rect(0, 0, (width // 2) - 40, height)  # Contenedor de la interfaz
+    padding = 5  # px
+    interfaz_rect.inflate_ip(-padding * 2, -padding * 2)  # Ajustar para el padding
+
+    def interface():
+        pygame.draw.rect(screen, (200, 100, 100), interfaz_rect)  # Interfaz background
+
+        # Puntuación
+        texto_puntuacion = pygame.font.Font(None, 24).render("AquaFragments: " + str(aquafragments), True,
+                                                             (0, 0, 0))
+        screen.blit(texto_puntuacion, (10, 10))  # Posición de la puntuación en la pantalla
+        # GAME OVER
         if current_wave.is_completed():
             # Ganaste o lo que sea
             font = pygame.font.Font(None, 74).render(str("¡Enhorabuena ganaste!"), 1, (255, 255, 255))
@@ -52,7 +67,11 @@ def start_game():
                 (screen.get_width() // 2) - (font.get_width() // 2),
                 (screen.get_height() // 2) - (font.get_height() // 2)))
 
-    #  Bucle del JUEGO
+    # LOGICA
+    def game_logic():
+        pass
+
+    # Bucle del JUEGO
     running = True
     while running:
         running = not handle_events()  # Eventos registrados del programa
@@ -66,9 +85,12 @@ def start_game():
         allies.update()
         current_wave.draw()  # Enemies Wave
         current_wave.update()
+
+        # Interfaz
+        interface()  # Toda la interfaz
+        # Cursor
         custom_cursor.update()  # Cursor pointer
         custom_cursor.draw()
-
         pygame.display.flip()  # Actualizar pantalla
         clock.tick(60)  # Felocidad de fotogramas
 

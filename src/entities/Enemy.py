@@ -1,10 +1,12 @@
 import pygame
 
+from src import game_logic
 from src.entities.Entity import Entity
 
 
 class Enemy(Entity):
-    def __init__(self, x, y, size, enemies, vida, ataque, velocidad, velocidad_ataque, rango, element="agua"):
+    def __init__(self, x, y, size, enemies, vida, ataque, velocidad, velocidad_ataque, rango, aquafragments,
+                 element="agua"):
         super().__init__(x, y, size, element)
 
         # Atributos
@@ -16,6 +18,8 @@ class Enemy(Entity):
         self.rango = rango
         self.tiempo_ultimo_ataque = 0
         self.enemies = enemies
+
+        self.aquafragments = aquafragments  # Los fragmentos que suelta
 
         # Healthbar
         self.barra_vida_color = (160, 60, 60)
@@ -73,7 +77,8 @@ class Enemy(Entity):
             self.morir()
 
     def morir(self):
-        print("A muerto un enemigo!")
+        print(f"Ha muerto {self}")
+        game_logic.aquafragments += self.aquafragments
         self.kill()
 
     def draw(self, screen):
