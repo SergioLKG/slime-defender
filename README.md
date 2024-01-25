@@ -6,6 +6,10 @@
 > python.exe -m pip install pygame
 ```
 
+```cmd
+> git clone https://github.com/SergioLKG/slime-defender.git
+```
+
 ## Planteamiento del Proyecto
 
 ### Idea de proyecto: Juego estilo idle/clicker, de defender la fortaleza.
