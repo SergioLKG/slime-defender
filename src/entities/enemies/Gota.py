@@ -8,8 +8,8 @@ class Gota(Enemy):
         ataque = 1
         velocidad = 1
         velocidad_ataque = 1
-        rango = 50
         size = (50, 50)
+        rango = (size[0]//2 + 50)
         aquafragments = 200
         super().__init__(x, y, size, objetivo, vida, ataque, velocidad, velocidad_ataque, rango, aquafragments,
                          element="agua")

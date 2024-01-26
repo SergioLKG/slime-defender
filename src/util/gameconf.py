@@ -1,4 +1,5 @@
 # gameconf.py
+import pygame
 import pygame as p
 
 
@@ -16,9 +17,14 @@ width = 800
 height = 600
 resolution = (width, height)  # Tamaño pantalla
 
+# GRAPHICS
+hardware_acceleratio = pygame.HWACCEL
+double_buffer = pygame.DOUBLEBUF
+fullscreen = pygame.FULLSCREEN
+
 
 def screenconf():
-    p.display.set_mode(__resolutionscreen__())  # Tamaño pantalla
+    p.display.set_mode(resolution, hardware_acceleratio | double_buffer)  # Tamaño pantalla
 
 
 # <- SCREEN
