@@ -29,9 +29,11 @@ def start_game():
     ##############################
     # user: Usuario = user_input.open()
 
-    click_timer = 0
-    current_time = pygame.time.get_ticks()
-    elapsed_time = current_time - click_timer
+    clock = pygame.time.Clock()
+
+    # click_timer = 0
+    # current_time = pygame.time.get_ticks()
+    # elapsed_time = current_time - click_timer
 
     # IMGS
     bg_img = cargar_imagen(screen, "assets/bg/fondo_atardecer.png")  # Fondo
@@ -54,7 +56,7 @@ def start_game():
     padding = 5  # px
     interfaz_rect.inflate_ip(-padding * 2, -padding * 2)  # Ajustar para el padding
 
-    def interface(aquafragments, player):
+    def interface():
         pygame.draw.rect(screen, (200, 100, 100), interfaz_rect)  # Interfaz background
 
         draw_eff_menu(screen, interfaz_rect, aquafragments, player)
@@ -94,13 +96,13 @@ def start_game():
             current_wave.update()
 
         # Interfaz
-        interface(aquafragments, player)  # Toda la interfaz
+        interface()  # Toda la interfaz
 
         # Cursor
         custom_cursor.update()  # Cursor pointer
         custom_cursor.draw()
         pygame.display.update()  # Actualizar pantalla, mejor rendimiento que .flip()
-        pygame.time.Clock().tick(60)  # Felocidad de fotogramas
+        clock.tick(60)  # Felocidad de fotogramas
 
 
 def cargar_imagen(screen, path):
