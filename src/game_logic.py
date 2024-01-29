@@ -5,7 +5,6 @@ import src.controls.mouse as mouseconf
 import src.util.gameconf as conf
 from src.entities.Group import Group
 from src.ui import EffectsMenu
-from src.ui.EffectsMenu import draw_eff_menu
 from src.util.WaveBuilder import WaveBuilder
 from src.util.users import *
 
@@ -51,7 +50,7 @@ def start_game():
     elapsed_time = current_time - click_timer
 
     # IMGS
-    bg_img = cargar_imagen(screen, "assets/bg/fondo_atardecer.png")  # Fondo
+    bg_img = cargar_fondo(screen, "assets/bg/fondo_atardecer.png")  # Fondo
 
     # Entities                               Menos el 20% del height
     player = Player((width // 2 - 40), (height // 2 - 40 + (height * 0.22)), (80, 80))
@@ -71,15 +70,23 @@ def start_game():
     allies.set_enemies(current_wave.get_enemies())
 
     # Interfaz
-    interfaz_rect = pygame.Rect(0, 0, (width // 2) - 40, height)  # Contenedor de la interfaz
+    interfaz_bg = pygame.transform.scale(pygame.image.load("assets/ui/general/general_bg.png"),
+                                         size=((width // 2) - 40, height)).convert_alpha()  # Contenedor de la interfaz
+    interfaz_rect = interfaz_bg.get_rect()
     padding = 5  # px
     interfaz_rect.inflate_ip(-padding * 2, -padding * 2)  # Ajustar para el padding
     EffectsMenu.load_ef_menu_img()
 
     def interface():
         global current_wave, wave_number
-        pygame.draw.rect(screen, (200, 100, 100), interfaz_rect)  # Interfaz background
+        screen.blit(interfaz_bg, interfaz_rect)  # Interfaz background
 
+        # Puntuación
+        screen.blit(pygame.font.Font(None, 24).render("AquaFragments: " + str(aquafragments), True,
+                                                      (0, 0, 0)), (width // 2 - 20, 40))
+        # Wave
+        screen.blit(pygame.font.Font(None, 24).render("Wave " + str(wave_number), True,
+                                                      (20, 0, 0)), (width - 90, 40))
         EffectsMenu.draw_eff_menu(screen, interfaz_rect, aquafragments, player)
 
         # GAME OVER
@@ -147,7 +154,7 @@ def start_game():
         clock.tick(60)  # Felocidad de fotogramas
 
 
-def cargar_imagen(screen, path):
+def cargar_fondo(screen, path):
     try:
         bg_img = pygame.image.load(path)
         bg_img = pygame.transform.scale(bg_img, (screen.get_width(), screen.get_height()))

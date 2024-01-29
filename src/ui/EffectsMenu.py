@@ -1,5 +1,3 @@
-import os
-
 from src.effects.BuffAttack import BuffAttack
 from src.effects.BuffVida import BuffVida
 import pygame
@@ -16,7 +14,7 @@ img_boton_off = None
 
 def load_image(nombre, size):
     try:
-        return pygame.transform.scale(pygame.image.load(os.path.join("assets/ui/general", nombre)),
+        return pygame.transform.scale(pygame.image.load(f"assets/ui/general/{nombre}"),
                                       size=size).convert_alpha()
     except FileNotFoundError:
         return pygame.transform.scale(pygame.image.load("assets/debug.png"), size=size).convert_alpha()
@@ -27,16 +25,14 @@ def load_ef_menu_img():
     # img_buff_vida = load_image()
     # img_buff_dano = load_image()
     # img_robo_vida = load_image()
-    img_boton_on = load_image("btn_bg", (160, 40))
-    img_boton_off = load_image("btn_bg_disable", (160, 40))
+    img_boton_on = load_image("btn_bg.png", (160, 40))
+    img_boton_off = load_image("btn_bg_disable.png", (160, 40))
     # img_marco_ef = load_image()
 
 
 def draw_eff_menu(screen, interfaz_rect, aquafragments, player):
     global img_boton_off, img_boton_on
     # --------------------- EFFECTS ---------------------
-    effects_cat = pygame.Rect(interfaz_rect.left, interfaz_rect.top + 50, interfaz_rect.width, 300)
-    pygame.draw.rect(screen, (200, 100, 100), effects_cat)
     margin_left_ef = 30
     # ########### BuffVida ###########
     tier_actual_buff_vida = 0
@@ -112,10 +108,6 @@ def draw_eff_menu(screen, interfaz_rect, aquafragments, player):
     screen.blit(texto_boton_robo_vida, (boton_robo_vida_rect.left + 10, boton_robo_vida_rect.top + 10))
     screen.blit(info_txt_roba_vida, (boton_robo_vida_rect.left + 160, boton_robo_vida_rect.top + 12))
     # #################################
-
-    # Puntuación
-    screen.blit(pygame.font.Font(None, 24).render("AquaFragments: " + str(aquafragments), True,
-                                                  (0, 0, 0)), (interfaz_rect.left + 30, interfaz_rect.top + 20))
 
     # Detectar clic en botones
     if pygame.mouse.get_pressed()[0]:  # Botón izquierdo del ratón
