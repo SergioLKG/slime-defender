@@ -1,11 +1,39 @@
+import os
+
 from src.effects.BuffAttack import BuffAttack
 from src.effects.BuffVida import BuffVida
 import pygame
 
 from src.effects.RoboVida import RoboVida
 
+# img_buff_vida = load_image()
+# img_buff_dano = load_image()
+# img_robo_vida = load_image()
+# img_marco_ef = load_image()
+img_boton_on = None
+img_boton_off = None
+
+
+def load_image(nombre, size):
+    try:
+        return pygame.transform.scale(pygame.image.load(os.path.join("assets/ui/general", nombre)),
+                                      size=size).convert_alpha()
+    except FileNotFoundError:
+        return pygame.transform.scale(pygame.image.load("assets/debug.png"), size=size).convert_alpha()
+
+
+def load_ef_menu_img():
+    global img_boton_on, img_boton_off
+    # img_buff_vida = load_image()
+    # img_buff_dano = load_image()
+    # img_robo_vida = load_image()
+    img_boton_on = load_image("btn_bg", (160, 40))
+    img_boton_off = load_image("btn_bg_disable", (160, 40))
+    # img_marco_ef = load_image()
+
 
 def draw_eff_menu(screen, interfaz_rect, aquafragments, player):
+    global img_boton_off, img_boton_on
     # --------------------- EFFECTS ---------------------
     effects_cat = pygame.Rect(interfaz_rect.left, interfaz_rect.top + 50, interfaz_rect.width, 300)
     pygame.draw.rect(screen, (200, 100, 100), effects_cat)
@@ -17,12 +45,12 @@ def draw_eff_menu(screen, interfaz_rect, aquafragments, player):
             tier_actual_buff_vida = effect.tier
 
     precio_buff_vida = BuffVida(tier_actual_buff_vida + 1).precio
-    color_bv_btn = (100, 255, 100)
-    if aquafragments < precio_buff_vida:
-        color_bv_btn = (220, 50, 50)
+
+    screen.blit(img_boton_off, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 50))
+    if aquafragments >= precio_buff_vida:
+        screen.blit(img_boton_on, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 50))
 
     boton_buff_vida_rect = pygame.Rect(interfaz_rect.left + margin_left_ef, interfaz_rect.top + 50, 160, 40)
-    pygame.draw.rect(screen, color_bv_btn, boton_buff_vida_rect)  # Color verde para el botón
 
     texto_boton_buff_vida = pygame.font.Font(None, 24).render(f"+Health | {precio_buff_vida}AF", True,
                                                               (0, 0, 0))
@@ -42,12 +70,11 @@ def draw_eff_menu(screen, interfaz_rect, aquafragments, player):
             tier_actual_buff_dano = effect.tier
 
     precio_buff_dano = BuffAttack(tier_actual_buff_dano + 1).precio
-    color_ba_btn = (100, 255, 100)
-    if aquafragments < precio_buff_dano:
-        color_ba_btn = (220, 50, 50)
+    screen.blit(img_boton_off, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 100))
+    if aquafragments >= precio_buff_vida:
+        screen.blit(img_boton_on, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 100))
 
     boton_buff_dano_rect = pygame.Rect(interfaz_rect.left + margin_left_ef, interfaz_rect.top + 100, 160, 40)
-    pygame.draw.rect(screen, color_ba_btn, boton_buff_dano_rect)
 
     texto_boton_buff_dano = pygame.font.Font(None, 24).render(f"+Attack | {precio_buff_dano} AF", True,
                                                               (0, 0, 0))
@@ -67,12 +94,11 @@ def draw_eff_menu(screen, interfaz_rect, aquafragments, player):
 
     precio_robo_vida = RoboVida(tier_actual_robo_vida + 1).precio
 
-    color_rv_btn = (100, 255, 100)
-    if aquafragments < precio_robo_vida:
-        color_rv_btn = (220, 50, 50)
+    screen.blit(img_boton_off, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 150))
+    if aquafragments >= precio_buff_vida:
+        screen.blit(img_boton_on, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 150))
 
     boton_robo_vida_rect = pygame.Rect(interfaz_rect.left + margin_left_ef, interfaz_rect.top + 150, 160, 40)
-    pygame.draw.rect(screen, color_rv_btn, boton_robo_vida_rect)
 
     texto_boton_robo_vida = pygame.font.Font(None, 24).render(f"+LifeSteal | {precio_robo_vida} AF",
                                                               True,

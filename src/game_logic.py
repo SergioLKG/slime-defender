@@ -4,6 +4,7 @@ import pygame.draw
 import src.controls.mouse as mouseconf
 import src.util.gameconf as conf
 from src.entities.Group import Group
+from src.ui import EffectsMenu
 from src.ui.EffectsMenu import draw_eff_menu
 from src.util.WaveBuilder import WaveBuilder
 from src.util.users import *
@@ -73,13 +74,13 @@ def start_game():
     interfaz_rect = pygame.Rect(0, 0, (width // 2) - 40, height)  # Contenedor de la interfaz
     padding = 5  # px
     interfaz_rect.inflate_ip(-padding * 2, -padding * 2)  # Ajustar para el padding
+    EffectsMenu.load_ef_menu_img()
 
     def interface():
-        global wave_number
-        global current_wave
+        global current_wave, wave_number
         pygame.draw.rect(screen, (200, 100, 100), interfaz_rect)  # Interfaz background
 
-        draw_eff_menu(screen, interfaz_rect, aquafragments, player)
+        EffectsMenu.draw_eff_menu(screen, interfaz_rect, aquafragments, player)
 
         # GAME OVER
         if current_wave.is_completed():
@@ -107,7 +108,7 @@ def start_game():
                     wave_number += 1
                     new_wave_config = {
                         "num_enemies": calculate_num_enemies(),
-                        "enemy_cooldown": 2000,
+                        "enemy_cooldown": 1500,
                         "enemy_types": None
                     }
                     current_wave = WaveBuilder.build_wave(screen, allies, new_wave_config)
