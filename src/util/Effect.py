@@ -18,7 +18,7 @@ class Effect:
             return int(precio * (tier * 0.65))
         if tier >= 12:  # No creo que ninguna llegue aquí xd
             return int(precio * (tier * 0.60))
-        return int(precio * (tier * 0.75))
+        return int(precio * (tier * 0.75))  # TODO EDUARDO
 
     def cargar(self, entity: Entity):
         # Effecto que quieres cargar en Player

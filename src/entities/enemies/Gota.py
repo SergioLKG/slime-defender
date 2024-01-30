@@ -5,8 +5,8 @@ class Gota(Enemy):
 
     def __init__(self, x, y, objetivo):
         vida = 20
-        ataque = 1
-        velocidad = 1
+        ataque = 5
+        velocidad = 0.6
         velocidad_ataque = 1
         size = (50, 50)
         rango = (size[0]//2 + 50)

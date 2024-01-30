@@ -42,18 +42,18 @@ def draw_eff_menu(screen, interfaz_rect, aquafragments, player):
 
     precio_buff_vida = BuffVida(tier_actual_buff_vida + 1).precio
 
-    screen.blit(img_boton_off, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 50))
-    if aquafragments >= precio_buff_vida:
-        screen.blit(img_boton_on, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 50))
+    screen.blit(img_boton_on, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 50))
+    if aquafragments < precio_buff_vida:
+        screen.blit(img_boton_off, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 50))
 
-    boton_buff_vida_rect = pygame.Rect(interfaz_rect.left + margin_left_ef, interfaz_rect.top + 50, 160, 40)
-
-    texto_boton_buff_vida = pygame.font.Font(None, 24).render(f"+Health | {precio_buff_vida}AF", True,
+    texto_boton_buff_vida = pygame.font.Font(None, 24).render(f"+Health", True,
                                                               (0, 0, 0))
     info_txt_buff_dano = pygame.font.Font(None, 20).render(
-        f" +{int(BuffVida(tier_actual_buff_vida + 1).calculate())} HP",
+        f" {precio_buff_vida} AF | +{int(BuffVida(tier_actual_buff_vida + 1).calculate())} HP",
         True,
         (0, 0, 0))
+
+    boton_buff_vida_rect = pygame.Rect(interfaz_rect.left + margin_left_ef, interfaz_rect.top + 50, 160, 40)
 
     screen.blit(info_txt_buff_dano, (boton_buff_vida_rect.left + 160, boton_buff_vida_rect.top + 12))
     screen.blit(texto_boton_buff_vida, (boton_buff_vida_rect.left + 10, boton_buff_vida_rect.top + 10))
@@ -66,18 +66,19 @@ def draw_eff_menu(screen, interfaz_rect, aquafragments, player):
             tier_actual_buff_dano = effect.tier
 
     precio_buff_dano = BuffAttack(tier_actual_buff_dano + 1).precio
-    screen.blit(img_boton_off, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 100))
-    if aquafragments >= precio_buff_vida:
-        screen.blit(img_boton_on, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 100))
+    screen.blit(img_boton_on, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 100))
+    if aquafragments < precio_buff_vida:
+        screen.blit(img_boton_off, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 100))
 
     boton_buff_dano_rect = pygame.Rect(interfaz_rect.left + margin_left_ef, interfaz_rect.top + 100, 160, 40)
 
-    texto_boton_buff_dano = pygame.font.Font(None, 24).render(f"+Attack | {precio_buff_dano} AF", True,
+    texto_boton_buff_dano = pygame.font.Font(None, 24).render(f"+Attack ", True,
                                                               (0, 0, 0))
     info_txt_buff_dano = pygame.font.Font(None, 20).render(
-        f" +{int(BuffAttack(tier_actual_buff_dano + 1).calculate())} ATK",
+        f" {precio_buff_dano} AF | +{int(BuffAttack(tier_actual_buff_dano + 1).calculate())} ATK",
         True,
         (0, 0, 0))
+
     screen.blit(info_txt_buff_dano, (boton_buff_dano_rect.left + 160, boton_buff_dano_rect.top + 12))
     screen.blit(texto_boton_buff_dano, (boton_buff_dano_rect.left + 10, boton_buff_dano_rect.top + 10))
     # #################################
@@ -90,18 +91,18 @@ def draw_eff_menu(screen, interfaz_rect, aquafragments, player):
 
     precio_robo_vida = RoboVida(tier_actual_robo_vida + 1).precio
 
-    screen.blit(img_boton_off, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 150))
-    if aquafragments >= precio_buff_vida:
-        screen.blit(img_boton_on, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 150))
+    screen.blit(img_boton_on, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 150))
+    if aquafragments < precio_buff_vida:
+        screen.blit(img_boton_off, (interfaz_rect.left + margin_left_ef, interfaz_rect.top + 150))
 
     boton_robo_vida_rect = pygame.Rect(interfaz_rect.left + margin_left_ef, interfaz_rect.top + 150, 160, 40)
 
-    texto_boton_robo_vida = pygame.font.Font(None, 24).render(f"+LifeSteal | {precio_robo_vida} AF",
+    texto_boton_robo_vida = pygame.font.Font(None, 24).render(f"+LifeSteal ",
                                                               True,
                                                               (0, 0, 0))
 
     info_txt_roba_vida = pygame.font.Font(None, 20).render(
-        f" +{int(RoboVida(tier_actual_robo_vida + 1).calculate())} %",
+        f" {precio_robo_vida} AF | +{int(RoboVida(tier_actual_robo_vida + 1).calculate())} %",
         True,
         (0, 0, 0))
 
@@ -110,7 +111,7 @@ def draw_eff_menu(screen, interfaz_rect, aquafragments, player):
     # #################################
 
     # Detectar clic en botones
-    if pygame.mouse.get_pressed()[0]:  # Botón izquierdo del ratón
+    if pygame.mouse.get_pressed()[0] == pygame.MOUSEBUTTONUP:  # Botón izquierdo del ratón
         mouse_pos = pygame.mouse.get_pos()
         if boton_buff_vida_rect.collidepoint(mouse_pos):
             if aquafragments >= precio_buff_vida:  # Costo del BuffVida

@@ -73,8 +73,6 @@ class Enemy(Entity):
         if self.vida > 0:
             self.vida = max(0, self.vida - self.tabla_tipos(cantidad, elemento_enemigo))
             print(f"{self} recibe daño")
-        else:
-            self.morir()
 
     def morir(self):
         print(f"Ha muerto {self}")
@@ -86,6 +84,8 @@ class Enemy(Entity):
         self.draw_healthbar(screen)
 
     def update(self):
+        if self.vida <= 0:
+            self.morir()
         for enemigo in self.enemies:
             if not enemigo.alive():  # Si player NO esta vivo
                 # TODDO dance (por ejemplo)
