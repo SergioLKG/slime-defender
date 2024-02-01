@@ -6,7 +6,7 @@ class GotaMuscle(Enemy):
     def __init__(self, x, y, objetivo):
         vida = 50
         ataque = 20
-        velocidad = 0.5
+        velocidad = 0.6
         velocidad_ataque = 0.3
         size = (70, 70)
         rango = (size[0]//2 + 50)

@@ -6,7 +6,7 @@ class GotaShield(Enemy):
     def __init__(self, x, y, objetivo):
         vida = 80
         ataque = 1
-        velocidad = 0.5
+        velocidad = 0.6
         velocidad_ataque = 0.8
         size = (60, 60)
         rango = (size[0]//2 + 50)

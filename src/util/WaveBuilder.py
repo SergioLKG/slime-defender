@@ -22,10 +22,18 @@ class WaveBuilder:
                 # Restringir a solo un Boss por wave
                 num_enemies -= 1
 
-            # Proporciones deseadas (ajusta según tus necesidades)
-            gota_count = int(num_enemies * 0.6)
-            gota_escudo_count = int(num_enemies * 0.3)
-            gota_musculosa_count = num_enemies - gota_count - gota_escudo_count
+            gota_count = int(num_enemies * 1)
+            gota_escudo_count = int(num_enemies * 0)
+            gota_musculosa_count = int(num_enemies * 0)
+
+            if current_wave > 6:
+                gota_count = int(num_enemies * 0.6)
+                gota_escudo_count = int(num_enemies * 0.3)
+                gota_musculosa_count = num_enemies - gota_count - gota_escudo_count
+
+            if current_wave > 3:
+                gota_count = int(num_enemies * 0.7)
+                gota_escudo_count = int(num_enemies * 0.3)
 
             # Añadir enemigos a la lista
             enemy_types += [Gota] * gota_count
