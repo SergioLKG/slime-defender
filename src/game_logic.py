@@ -1,5 +1,5 @@
 # game_logic.py
-import pygame.draw
+import pygame
 
 import src.controls.mouse as mouseconf
 import src.util.gameconf as conf
@@ -23,6 +23,13 @@ coin_img = load_image(directorio="assets/ui/general/coin.png")
 aquafragments: int = 0  # Monedas en partida
 wave_number: int = 1  # Wave actual
 current_wave = None
+
+# Mouse Variables
+mouse_dmg = 5
+mouse_cooldown = 2000
+click_timer = 0
+current_time = pygame.time.get_ticks()
+elapsed_time = max(0, current_time - click_timer)
 
 # Ui
 go_next = load_image("assets/ui/general/go_next.png")
@@ -59,10 +66,6 @@ def start_game():
     # user: Usuario = user_input.open()
 
     clock = pygame.time.Clock()
-
-    click_timer = 0
-    current_time = pygame.time.get_ticks()
-    elapsed_time = current_time - click_timer
 
     # IMGS
     bg_img = cargar_fondo(screen, "assets/bg/fondo_atardecer.png")  # Fondo
@@ -130,8 +133,8 @@ def start_game():
                 # Ir al menu
                 return True
 
-            if go_next_rect.collidepoint(pygame.mouse.get_pos()):
-                if pygame.mouse.get_pressed()[0]:  # Botón izquierdo del ratón
+            if pygame.mouse.get_pressed()[0]:  # Botón izquierdo del ratón
+                if go_next_rect.collidepoint(pygame.mouse.get_pos()):
                     wave_number += 1
                     cd = max(1000, wave_config.get("enemy_cooldown") - (wave_number * 50))
                     new_wave_config = {
@@ -153,9 +156,33 @@ def start_game():
 
     # LOGICA
     def game_logic():
-        pass
+        global click_timer, current_time, elapsed_time, mouse_cooldown
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()[0]
+        if mouse_pressed:
+            for enemie in current_wave.get_enemies():
+                if enemie.rect.collidepoint(mouse_pos):
+                    if elapsed_time <= 0:
+                        enemie.recibir_dano(mouse_dmg)
+                        click_timer = mouse_cooldown
 
-    # Bucle del JUEGO
+    def cd_mouse_bar():
+        global click_timer, current_time, elapsed_time, mouse_cooldown
+        for i in range(1):
+            time_now = current_time
+            i += 1
+        if elapsed_time <= 0:
+            x = custom_cursor.rect.left
+            y = custom_cursor.rect.top + 10
+            bg_bar = pygame.Rect(x, y, custom_cursor.rect.width, 5, )
+            active_bar = pygame.Rect(x, y, custom_cursor.rect.width, 5)
+
+            pygame.draw.rect(screen, (50, 50, 50), bg_bar)
+            pygame.draw.rect(screen, (100, 100, 100), active_bar)
+
+            # Bucle del JUEGO
+            running = True
+
     running = True
     while running:
         running = not handle_events()  # Eventos registrados del programa
