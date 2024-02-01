@@ -24,7 +24,7 @@ fullscreen = pygame.FULLSCREEN
 
 
 def screenconf():
-    p.display.set_mode(resolution, hardware_acceleratio | double_buffer)  # Tamaño pantalla
+    p.display.set_mode(resolution, double_buffer)  # Tamaño pantalla
 
 
 # <- SCREEN

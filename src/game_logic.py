@@ -96,11 +96,11 @@ def start_game():
         global current_wave, wave_number, aquafragments, go_next
         screen.blit(interfaz_bg, interfaz_rect)  # Interfaz background
 
-        screen.blit(pygame.transform.scale(coin_img, (20, 20)).convert_alpha(), (width // 2 - 20, 36))
+        screen.blit(pygame.transform.scale(coin_img, (30, 30)).convert_alpha(), (width // 2 - 44, 33))
 
         # Puntuación
         screen.blit(pygame.font.Font(None, 24).render(str(aquafragments), True,
-                                                      (0, 0, 0)), (width // 2 + 5, 40))
+                                                      (0, 0, 0)), (width // 2 - 10, 42))
         # Wave
         screen.blit(pygame.font.Font(None, 24).render("Wave " + str(wave_number), True,
                                                       (20, 0, 0)), (width - 90, 35))
