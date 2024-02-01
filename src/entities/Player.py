@@ -1,7 +1,7 @@
 import pygame.sprite
 
 from src.entities.Entity import *
-from src.util.Effect import Effect
+from src.effects.Effect import Effect
 
 
 class Player(Entity):

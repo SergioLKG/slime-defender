@@ -1,5 +1,5 @@
 from src.entities.Player import Player
-from src.util.Effect import Effect
+from src.effects.Effect import Effect
 
 
 class BuffAttack(Effect):
