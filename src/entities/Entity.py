@@ -4,7 +4,7 @@ import pygame
 
 
 class Entity(pygame.sprite.Sprite):
-    def __init__(self, x, y, size=(50, 50), element="neutro"):
+    def __init__(self, x, y, size=(60, 60), element="neutro"):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y

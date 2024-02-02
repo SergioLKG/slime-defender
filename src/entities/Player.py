@@ -56,13 +56,15 @@ class Player(Entity):
             if self.element == 'neutro':
                 return self.load_image("assets/sprites/entities/player", "slime_neutro.png")
             if self.element == 'fuego':
-                return self.load_image("assets/sprites/entities/player", "slime_fuego.png")
+                return self.load_image("assets/sprites/entities/player", "slime_fire.png")
             if self.element == 'agua':
-                return self.load_image("assets/sprites/entities/player", "slime_agua.png")
-            if self.element == 'tierra':
-                return self.load_image("assets/sprites/entities/player", "slime_tierra.png")
+                return self.load_image("assets/sprites/entities/player", "slime_water.png")
+            if self.element == 'rayo':
+                return self.load_image("assets/sprites/entities/player", "slime_thunder.png")
             if self.element == 'hielo':
-                return self.load_image("assets/sprites/entities/player", "slime_hielo.png")
+                return self.load_image("assets/sprites/entities/player", "slime_ice.png")
+            if self.element == 'plant':
+                return self.load_image("assets/sprites/entities/player", "slime_plant.png")
         except FileNotFoundError:
             return self.load_image("assets", "debug.png")
 

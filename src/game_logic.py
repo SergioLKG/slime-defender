@@ -71,7 +71,7 @@ def start_game():
     bg_img = cargar_fondo(screen, "assets/bg/fondo_atardecer.png")  # Fondo
 
     # Entities                               Menos el 20% del height
-    player = Player((width // 2 - 40), (height // 2 - 40 + (height * 0.22)), (80, 80))
+    player = Player((width // 2 - 70), (height // 2 - 40 + (height * 0.22)), (90, 90))
     player.cargar_effects()
     player.vida = player.vida_maxima  # Curamos al player para que empiece con toda la vida
 
