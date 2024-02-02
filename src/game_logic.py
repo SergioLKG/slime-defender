@@ -1,6 +1,4 @@
 # game_logic.py
-import pygame
-
 import src.controls.mouse as mouseconf
 import src.util.gameconf as conf
 from src.entities.Group import Group
@@ -31,11 +29,6 @@ click_timer = 0
 current_time = pygame.time.get_ticks()
 elapsed_time = max(0, current_time - click_timer)
 
-# Ui
-go_next = load_image("assets/ui/general/go_next.png")
-
-
-# go_back = load_image()
 
 def calculate_num_enemies():
     # Ajusta esta lógica según tus necesidades
@@ -69,6 +62,8 @@ def start_game():
 
     # IMGS
     bg_img = cargar_fondo(screen, "assets/bg/fondo_atardecer.png")  # Fondo
+    go_next = load_image("assets/ui/general/go_next.png")  # Botón next
+    go_back = load_image("assets/ui/general/go_back.png")  # Botón back
 
     # Entities                               Menos el 20% del height
     player = Player((width // 2 - 70), (height // 2 - 40 + (height * 0.22)), (90, 90))
@@ -96,7 +91,7 @@ def start_game():
     EffectsMenu.load_ef_menu_img()
 
     def interface():
-        global current_wave, wave_number, aquafragments, go_next
+        global current_wave, wave_number, aquafragments
         screen.blit(interfaz_bg, interfaz_rect)  # Interfaz background
 
         screen.blit(pygame.transform.scale(coin_img, (30, 30)).convert_alpha(), (width // 2 - 44, 33))
@@ -116,25 +111,25 @@ def start_game():
                 (screen.get_width() // 2) - (font.get_width() // 2),
                 (screen.get_height() // 2) - (font.get_height() // 2)))
 
-            go_back = pygame.Rect((screen.get_width() // 2 - 40) - 60, (screen.get_height() * 0.75 - 40), 80, 80)
+            go_back_img = pygame.transform.scale(go_back, (80, 80)).convert_alpha()
+            go_next_img = pygame.transform.scale(go_next, (80, 80)).convert_alpha()
 
-            pygame.draw.rect(screen, (220, 50, 50), go_back)  # go_back
-            screen.blit(pygame.transform.scale(go_next, (80, 80)).convert_alpha(),
-                        ((screen.get_width() // 2 - 40) + 60, screen.get_height() * 0.75 - 40))  # go_next
+            screen.blit(go_back_img, ((screen.get_width() // 2 - 40) - 60, screen.get_height() * 0.75 - 40))  # go_back
+            screen.blit(go_next_img, ((screen.get_width() // 2 - 40) + 60, screen.get_height() * 0.75 - 40))  # go_next
 
-            go_next_rect = pygame.transform.scale(go_next, (80, 80)).convert_alpha().get_rect()
+            go_back_rect = pygame.Rect((screen.get_width() // 2 - 40) - 60, screen.get_height() * 0.75 - 40, 80, 80)
+            go_next_rect = pygame.Rect((screen.get_width() // 2 - 40) + 60, screen.get_height() * 0.75 - 40, 80, 80)
+
             # Detectar clic en los botones
             mouse_pos = pygame.mouse.get_pos()
-            mouse_click = pygame.mouse.get_pressed()
+            mouse_click = pygame.mouse.get_pressed()[0]
 
-            game_over()
+            if mouse_click:  # Verificar si es un clic completo
+                if go_back_rect.collidepoint(mouse_pos):  # Verifica si el clic fue en go_back
+                    # Ir al menú
+                    return True
 
-            if go_back.collidepoint(mouse_pos) and mouse_click[0]:
-                # Ir al menu
-                return True
-
-            if pygame.mouse.get_pressed()[0]:  # Botón izquierdo del ratón
-                if go_next_rect.collidepoint(pygame.mouse.get_pos()):
+                if go_next_rect.collidepoint(mouse_pos):  # Verifica si el clic fue en go_next
                     wave_number += 1
                     cd = max(1000, wave_config.get("enemy_cooldown") - (wave_number * 50))
                     new_wave_config = {
@@ -145,6 +140,9 @@ def start_game():
                     current_wave = WaveBuilder.build_wave(screen, allies, new_wave_config)
                     allies.set_enemies(current_wave.get_enemies())
                     return True  # Salir del bucle y comenzar la siguiente wave
+
+            # Actualizar el estado del botón del ratón del ciclo anterior
+            game_logic.mouse_pressed_last_frame = mouse_click
 
     # GAME OVER
     def game_over():
@@ -180,9 +178,7 @@ def start_game():
             pygame.draw.rect(screen, (50, 50, 50), bg_bar)
             pygame.draw.rect(screen, (100, 100, 100), active_bar)
 
-            # Bucle del JUEGO
-            running = True
-
+    # Bucle del JUEGO
     running = True
     while running:
         running = not handle_events()  # Eventos registrados del programa
@@ -202,6 +198,8 @@ def start_game():
 
         # Interfaz
         interface()  # Toda la interfaz
+        if not player.alive():
+            game_over()
 
         # Cursor
         custom_cursor.update()  # Cursor pointer

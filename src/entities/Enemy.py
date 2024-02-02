@@ -4,6 +4,14 @@ from src import game_logic
 from src.entities.Entity import Entity
 
 
+def load_img_element(directorio):
+    try:
+        return pygame.transform.scale(pygame.image.load(directorio),
+                                      (20, 20)).convert_alpha()
+    except FileNotFoundError:
+        return pygame.transform.scale(pygame.image.load("assets/debug.png"), (20, 20)).convert_alpha()
+
+
 class Enemy(Entity):
     def __init__(self, x, y, size, enemies, vida, ataque, velocidad, velocidad_ataque, rango, aquafragments,
                  element="agua"):
@@ -20,6 +28,7 @@ class Enemy(Entity):
         self.enemies = enemies
 
         self.aquafragments = aquafragments  # Los fragmentos que suelta
+
         self.element_image = self.cargar_element()
 
         # Healthbar
@@ -28,29 +37,22 @@ class Enemy(Entity):
         self.barra_vida_ancho = self.rect.width
         self.barra_vida_alto = self.rect.height * 0.20
 
-    def load_image(self, directorio, nombre):
-        try:
-            return pygame.transform.scale(pygame.image.load(directorio),
-                                          size=self.size).convert_alpha()
-        except FileNotFoundError:
-            return pygame.transform.scale(pygame.image.load("assets/debug.png"), size=self.size).convert_alpha()
-
     def cargar_element(self):
         try:
             if self.element == 'neutro':
-                return self.load_image("assets/sprites/elements", "element_neutro.png")
+                return load_img_element("assets/sprites/elements/element_neutro.png")
             if self.element == 'fuego':
-                return self.load_image("assets/sprites/elements", "element_fire.png")
+                return load_img_element("assets/sprites/elements/element_fire.png")
             if self.element == 'agua':
-                return self.load_image("assets/sprites/elements", "element_water.png")
+                return load_img_element("assets/sprites/elements/element_water.png")
             if self.element == 'rayo':
-                return self.load_image("assets/sprites/elements", "element_thunder.png")
+                return load_img_element("assets/sprites/elements/element_thunder.png")
             if self.element == 'hielo':
-                return self.load_image("assets/sprites/elements", "element_ice.png")
+                return load_img_element("assets/sprites/elements/element_ice.png")
             if self.element == 'plant':
-                return self.load_image("assets/sprites/elements", "element_plant.png")
+                return load_img_element("assets/sprites/elements/element_plant.png")
         except FileNotFoundError:
-            return self.load_image("assets", "debug.png")
+            return load_img_element("assets/debug.png")
 
     def draw_healthbar(self, screen):  # Barra de vida
         vida_proporcion = self.vida / self.vida_maxima
@@ -73,6 +75,8 @@ class Enemy(Entity):
         #              barra_vida_rect.y - texto_puntuacion.get_height() // 2 + barra_vida_rect.height // 2))
 
         # Element
+        screen.blit(self.element_image,
+                    ((barra_vida_rect.left + 10) - (barra_vida_rect.width / 2), barra_vida_rect.top - 5))
 
     def atacar(self, enemigo):
         if self.esta_en_rango(enemigo):
