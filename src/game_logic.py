@@ -24,10 +24,10 @@ current_wave = None
 
 # Mouse Variables
 mouse_dmg = 5
-mouse_cooldown = 2000
-click_timer = 0
+mouse_cooldown = 20000
+
+click_timer = 0  # last_click
 current_time = pygame.time.get_ticks()
-elapsed_time = max(0, current_time - click_timer)
 
 
 def calculate_num_enemies():
@@ -55,8 +55,6 @@ def start_game():
 
     # MOUSE
     pygame.mouse.set_visible(0)  # Mouse Disable (Usando Custom -> controls\mouse.py)
-    ##############################
-    # user: Usuario = user_input.open()
 
     clock = pygame.time.Clock()
 
@@ -90,8 +88,14 @@ def start_game():
     interfaz_rect.inflate_ip(-padding * 2, -padding * 2)  # Ajustar para el padding
     EffectsMenu.load_ef_menu_img()
 
+    # START GAME
+    # user: Usuario = GameMenu.getUser() # User info
+
     def interface():
-        global current_wave, wave_number, aquafragments
+        global current_wave, wave_number, aquafragments, click_timer
+
+        click_timer = 0
+
         screen.blit(interfaz_bg, interfaz_rect)  # Interfaz background
 
         screen.blit(pygame.transform.scale(coin_img, (30, 30)).convert_alpha(), (width // 2 - 44, 33))
@@ -154,26 +158,28 @@ def start_game():
 
     # LOGICA
     def game_logic():
-        global click_timer, current_time, elapsed_time, mouse_cooldown
+        global mouse_cooldown, current_time, click_timer
+        elapsed_time = current_time - click_timer
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()[0]
         if mouse_pressed:
             for enemie in current_wave.get_enemies():
                 if enemie.rect.collidepoint(mouse_pos):
-                    if elapsed_time <= 0:
+                    if elapsed_time >= mouse_cooldown:
                         enemie.recibir_dano(mouse_dmg)
-                        click_timer = mouse_cooldown
+                        click_timer = pygame.time.get_ticks()
+                        print(f"Last hit: {click_timer}")
 
     def cd_mouse_bar():
-        global click_timer, current_time, elapsed_time, mouse_cooldown
-        for i in range(1):
-            time_now = current_time
-            i += 1
-        if elapsed_time <= 0:
-            x = custom_cursor.rect.left
-            y = custom_cursor.rect.top + 10
-            bg_bar = pygame.Rect(x, y, custom_cursor.rect.width, 5, )
-            active_bar = pygame.Rect(x, y, custom_cursor.rect.width, 5)
+        global mouse_cooldown, current_time, click_timer
+        elapsed_time = current_time - click_timer
+        if elapsed_time <= mouse_cooldown:
+            x = pygame.mouse.get_pos()[0]
+            y = pygame.mouse.get_pos()[1]
+
+            bg_bar = pygame.Rect(x, y + 32, custom_cursor.rect.width,
+                                 5, )
+            active_bar = pygame.Rect(x, y + 32, custom_cursor.rect.width, 5)
 
             pygame.draw.rect(screen, (50, 50, 50), bg_bar)
             pygame.draw.rect(screen, (100, 100, 100), active_bar)
@@ -202,6 +208,7 @@ def start_game():
             game_over()
 
         # Cursor
+        cd_mouse_bar()
         custom_cursor.update()  # Cursor pointer
         custom_cursor.draw()
         pygame.display.update()  # Actualizar pantalla, mejor rendimiento que .flip()
