@@ -20,12 +20,37 @@ class Enemy(Entity):
         self.enemies = enemies
 
         self.aquafragments = aquafragments  # Los fragmentos que suelta
+        self.element_image = self.cargar_element()
 
         # Healthbar
         self.barra_vida_color = (160, 60, 60)
         self.barra_vida_inactiva = (80, 20, 20)
         self.barra_vida_ancho = self.rect.width
         self.barra_vida_alto = self.rect.height * 0.20
+
+    def load_image(self, directorio, nombre):
+        try:
+            return pygame.transform.scale(pygame.image.load(directorio),
+                                          size=self.size).convert_alpha()
+        except FileNotFoundError:
+            return pygame.transform.scale(pygame.image.load("assets/debug.png"), size=self.size).convert_alpha()
+
+    def cargar_element(self):
+        try:
+            if self.element == 'neutro':
+                return self.load_image("assets/sprites/elements", "element_neutro.png")
+            if self.element == 'fuego':
+                return self.load_image("assets/sprites/elements", "element_fire.png")
+            if self.element == 'agua':
+                return self.load_image("assets/sprites/elements", "element_water.png")
+            if self.element == 'rayo':
+                return self.load_image("assets/sprites/elements", "element_thunder.png")
+            if self.element == 'hielo':
+                return self.load_image("assets/sprites/elements", "element_ice.png")
+            if self.element == 'plant':
+                return self.load_image("assets/sprites/elements", "element_plant.png")
+        except FileNotFoundError:
+            return self.load_image("assets", "debug.png")
 
     def draw_healthbar(self, screen):  # Barra de vida
         vida_proporcion = self.vida / self.vida_maxima
@@ -46,6 +71,8 @@ class Enemy(Entity):
         # screen.blit(texto_puntuacion,
         #             (barra_vida_rect.x - texto_puntuacion.get_width() // 2 + barra_vida_rect.width // 2,
         #              barra_vida_rect.y - texto_puntuacion.get_height() // 2 + barra_vida_rect.height // 2))
+
+        # Element
 
     def atacar(self, enemigo):
         if self.esta_en_rango(enemigo):
