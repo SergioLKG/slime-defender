@@ -1,4 +1,6 @@
 # game_logic.py
+import pygame.event
+
 import src.controls.mouse as mouseconf
 import src.util.gameconf as conf
 from src.entities.Group import Group
@@ -24,10 +26,8 @@ current_wave = None
 
 # Mouse Variables
 mouse_dmg = 5
-mouse_cooldown = 20000
-
-click_timer = 0  # last_click
-current_time = pygame.time.get_ticks()
+mouse_cooldown = 5000
+last_click = -5000
 
 
 def calculate_num_enemies():
@@ -60,6 +60,9 @@ def start_game():
 
     # IMGS
     bg_img = cargar_fondo(screen, "assets/bg/fondo_atardecer.png")  # Fondo
+    bg_night = cargar_fondo(screen, "assets/bg/fondo_noche.png")  # Fondo noche
+    bg_day = cargar_fondo(screen, "assets/bg/fondo_noche.png") # Fondo día
+    game_over = load_image("assets/ui/gameover.png")  # Game Over
     go_next = load_image("assets/ui/general/go_next.png")  # Botón next
     go_back = load_image("assets/ui/general/go_back.png")  # Botón back
 
@@ -91,10 +94,59 @@ def start_game():
     # START GAME
     # user: Usuario = GameMenu.getUser() # User info
 
-    def interface():
-        global current_wave, wave_number, aquafragments, click_timer
+    # GAME OVER
+    def game_over():
+        if not player.alive():
+            font = pygame.font.Font(None, 74).render(str("HAS PERDIDO"), 1, (230, 30, 230))
 
-        click_timer = 0
+            screen.blit(font, (
+                (screen.get_width() // 2) - (font.get_width() // 2),
+                (screen.get_height() // 2) - (font.get_height() // 2)))
+
+    # LOGICA
+    def game_logic():
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()[0]
+
+        if mouse_pressed:
+            handle_mouse_click(mouse_pos)
+
+    def handle_mouse_click(mouse_pos):
+        global last_click
+
+        current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - last_click
+
+        if elapsed_time >= mouse_cooldown:
+            for enemie in current_wave.get_enemies():
+                if enemie.rect.collidepoint(mouse_pos):
+                    enemie.recibir_dano(mouse_dmg)
+                    last_click = current_time
+                    print(f"Last hit: {last_click}")
+                    break
+
+    def cd_mouse_bar():
+        global mouse_cooldown, last_click
+
+        current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - last_click
+
+        if elapsed_time <= mouse_cooldown:
+            x = pygame.mouse.get_pos()[0]
+            y = pygame.mouse.get_pos()[1]
+
+            remaining_time = mouse_cooldown - elapsed_time
+            percentage_complete = remaining_time / mouse_cooldown
+
+            bg_bar = pygame.Rect(x, y + 32, custom_cursor.rect.width, 5)
+            active_bar_width = int(custom_cursor.rect.width * percentage_complete)
+            active_bar = pygame.Rect(x, y + 32, active_bar_width, 5)
+
+            pygame.draw.rect(screen, (50, 50, 50), bg_bar)
+            pygame.draw.rect(screen, (180, 180, 120), active_bar)
+
+    def interface():
+        global current_wave, wave_number, aquafragments
 
         screen.blit(interfaz_bg, interfaz_rect)  # Interfaz background
 
@@ -108,7 +160,7 @@ def start_game():
                                                       (20, 0, 0)), (width - 90, 35))
         EffectsMenu.draw_eff_menu(screen, interfaz_rect, player)
 
-        # GAME OVER
+        # WAVE COMPLETE
         if current_wave.is_completed():
             font = pygame.font.Font(None, 74).render(str("¡Enhorabuena ganaste!"), 1, (255, 255, 255))
             screen.blit(font, (
@@ -147,42 +199,6 @@ def start_game():
 
             # Actualizar el estado del botón del ratón del ciclo anterior
             game_logic.mouse_pressed_last_frame = mouse_click
-
-    # GAME OVER
-    def game_over():
-        if not player.alive():
-            font = pygame.font.Font(None, 74).render(str("HAS PERDIDO"), 1, (230, 30, 230))
-            screen.blit(font, (
-                (screen.get_width() // 2) - (font.get_width() // 2),
-                (screen.get_height() // 2) - (font.get_height() // 2)))
-
-    # LOGICA
-    def game_logic():
-        global mouse_cooldown, current_time, click_timer
-        elapsed_time = current_time - click_timer
-        mouse_pos = pygame.mouse.get_pos()
-        mouse_pressed = pygame.mouse.get_pressed()[0]
-        if mouse_pressed:
-            for enemie in current_wave.get_enemies():
-                if enemie.rect.collidepoint(mouse_pos):
-                    if elapsed_time >= mouse_cooldown:
-                        enemie.recibir_dano(mouse_dmg)
-                        click_timer = pygame.time.get_ticks()
-                        print(f"Last hit: {click_timer}")
-
-    def cd_mouse_bar():
-        global mouse_cooldown, current_time, click_timer
-        elapsed_time = current_time - click_timer
-        if elapsed_time <= mouse_cooldown:
-            x = pygame.mouse.get_pos()[0]
-            y = pygame.mouse.get_pos()[1]
-
-            bg_bar = pygame.Rect(x, y + 32, custom_cursor.rect.width,
-                                 5, )
-            active_bar = pygame.Rect(x, y + 32, custom_cursor.rect.width, 5)
-
-            pygame.draw.rect(screen, (50, 50, 50), bg_bar)
-            pygame.draw.rect(screen, (100, 100, 100), active_bar)
 
     # Bucle del JUEGO
     running = True
