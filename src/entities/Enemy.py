@@ -1,3 +1,5 @@
+import math
+
 import pygame
 
 from src import game_logic
@@ -12,9 +14,14 @@ def load_img_element(directorio):
         return pygame.transform.scale(pygame.image.load("assets/debug.png"), (20, 20)).convert_alpha()
 
 
+def calc_af():
+    wave_num = game_logic.wave_number
+    aquafragments = math.ceil(1 * 1.12 ** wave_num)
+    return aquafragments
+
+
 class Enemy(Entity):
-    def __init__(self, x, y, size, enemies, vida, ataque, velocidad, velocidad_ataque, rango, aquafragments,
-                 element="agua"):
+    def __init__(self, x, y, size, enemies, vida, ataque, velocidad, velocidad_ataque, rango, element="agua"):
         super().__init__(x, y, size, element)
 
         # Atributos
@@ -27,7 +34,7 @@ class Enemy(Entity):
         self.tiempo_ultimo_ataque = 0
         self.enemies = enemies
 
-        self.aquafragments = aquafragments  # Los fragmentos que suelta
+        self.aquafragments = calc_af()  # Los fragmentos que suelta
 
         self.element_image = self.cargar_element()
 
@@ -60,19 +67,20 @@ class Enemy(Entity):
         ancho_vida_proporcional = self.barra_vida_ancho * vida_proporcion
 
         barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.barra_vida_ancho, self.barra_vida_alto)
-
         vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - 20, ancho_vida_proporcional, self.barra_vida_alto)
+        vida_maxima_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.barra_vida_ancho, self.barra_vida_alto)
 
-        # Dibuja la barra de vida
         pygame.draw.rect(screen, self.barra_vida_inactiva, barra_vida_rect)  # Fondo barra
         pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect)  # Barra de vida
+        pygame.draw.rect(screen, (50, 50, 50), vida_maxima_rect, 2)  # Marco barra máxima
 
         # Dibujar numero de la vida actual
-        # txt_size = 16
-        # texto_puntuacion = pygame.font.Font(None, txt_size).render(str(self.vida), True, (255, 255, 255))
-        # screen.blit(texto_puntuacion,
-        #             (barra_vida_rect.x - texto_puntuacion.get_width() // 2 + barra_vida_rect.width // 2,
-        #              barra_vida_rect.y - texto_puntuacion.get_height() // 2 + barra_vida_rect.height // 2))
+        # Contador numerico vida
+        txt_size = 15
+        texto_puntuacion = pygame.font.Font(None, txt_size).render(str(int(self.vida)), True, (255, 255, 255))
+        screen.blit(texto_puntuacion,
+                    (barra_vida_rect.x - texto_puntuacion.get_width() // 2 + barra_vida_rect.width // 2,
+                     barra_vida_rect.y - texto_puntuacion.get_height() // 2 + barra_vida_rect.height // 2))
 
         # Element
         screen.blit(self.element_image,
@@ -82,7 +90,7 @@ class Enemy(Entity):
         if self.esta_en_rango(enemigo):
             if enemigo.alive() and self.esta_en_rango(enemigo):
                 if self.puede_atacar():
-                    print(f"{self} golpea a {enemigo}")
+                    # print(f"{self} golpea a {enemigo}")
                     enemigo.recibir_dano(self.calc_dmg())
                     self.tiempo_ultimo_ataque = pygame.time.get_ticks()
 
@@ -102,8 +110,8 @@ class Enemy(Entity):
 
     def recibir_dano(self, cantidad, elemento_enemigo="neutro"):
         if self.vida > 0:
-            self.vida = max(0, self.vida - self.tabla_tipos(cantidad, elemento_enemigo))
-            print(f"{self} recibe daño")
+            self.vida = max(0, int(self.vida - self.tabla_tipos(cantidad, elemento_enemigo)))
+            # print(f"{self} recibe daño")
 
     def morir(self):
         print(f"Ha muerto {self}")

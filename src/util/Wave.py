@@ -24,7 +24,7 @@ class Wave:
         if self.generated < self.num_enemies:
             if current_time > self.next_enemy_time:
                 enemy_type = random.choice(self.enemy_types)
-                r_height = random.uniform(0.19, 0.23)
+                r_height = random.uniform(0.23, 0.27)
                 enemy = enemy_type((self.screen.get_width()),
                                    (self.screen.get_height() // 2 + (self.screen.get_height() * r_height)),
                                    self.allies)

@@ -1,9 +1,12 @@
 # game_logic.py
+import math
+
 import pygame.event
 
 import src.controls.mouse as mouseconf
 import src.util.gameconf as conf
 from src.entities.Group import Group
+from src.entities.enemies.Boss import Boss
 from src.ui import EffectsMenu
 from src.util.WaveBuilder import WaveBuilder
 from src.util.users import *
@@ -32,10 +35,10 @@ last_click = -5000
 
 def calculate_num_enemies():
     # Ajusta esta lógica según tus necesidades
-    base_num_enemies = 4  # Número base de enemigos
-    enemies_per_wave = 2  # Aumento en el número de enemigos por cada wave
-
-    num_enemies = base_num_enemies + (wave_number - 1) * enemies_per_wave
+    multiplier = 1  # Aumento en el número de enemigos por cada wave
+    num_enemies = math.ceil((5 * wave_number / 2) / multiplier)
+    if wave_number % 20 == 0:
+        multiplier += 1
     return num_enemies
 
 
@@ -47,6 +50,7 @@ def start_game():
     ##############################
     # PYGAME CONFIG
     pygame.display.set_caption("Slime Defender: Aqua phobia")  # App Name
+    pygame.display.set_icon(pygame.image.load("assets/icon.png"))
     conf.importconfigs()  # Import configs
     width = conf.width
     height = conf.height
@@ -61,26 +65,25 @@ def start_game():
     # IMGS
     bg_img = cargar_fondo(screen, "assets/bg/fondo_atardecer.png")  # Fondo
     bg_night = cargar_fondo(screen, "assets/bg/fondo_noche.png")  # Fondo noche
-    bg_day = cargar_fondo(screen, "assets/bg/fondo_noche.png") # Fondo día
-    game_over = load_image("assets/ui/gameover.png")  # Game Over
+    bg_day = cargar_fondo(screen, "assets/bg/fondo_noche.png")  # Fondo día
+    game_over_img = load_image("assets/ui/general/gameover.png")  # Game Over
     go_next = load_image("assets/ui/general/go_next.png")  # Botón next
-    go_back = load_image("assets/ui/general/go_back.png")  # Botón back
+    go_back = load_image("assets/ui/general/home.png")  # Botón back
 
     # Entities                               Menos el 20% del height
-    player = Player((width // 2 - 70), (height // 2 - 40 + (height * 0.22)), (90, 90))
+    player = Player((width // 2), (height // 2 + (height * 0.22)), (90, 90))
     player.cargar_effects()
     player.vida = player.vida_maxima  # Curamos al player para que empiece con toda la vida
 
     allies = Group(screen)
     allies.add(player)
 
-    # Waves
-    wave_config = {
+    new_wave_config = {
         "num_enemies": calculate_num_enemies(),
         "enemy_cooldown": 2000,
         "enemy_types": None
     }
-    current_wave = WaveBuilder.build_wave(screen, allies, wave_config)
+    current_wave = WaveBuilder.build_wave(screen, allies, new_wave_config)
     allies.set_enemies(current_wave.get_enemies())
 
     # Interfaz
@@ -97,33 +100,42 @@ def start_game():
     # GAME OVER
     def game_over():
         if not player.alive():
-            font = pygame.font.Font(None, 74).render(str("HAS PERDIDO"), 1, (230, 30, 230))
+            go_back_img = pygame.transform.scale(go_back, (80, 80)).convert_alpha()
+            aux = pygame.transform.scale(game_over_img, (400, 250)).convert_alpha()
+            screen.blit(aux, (
+                (screen.get_width() // 2) - (aux.get_width() // 2),
+                (screen.get_height() // 2) - (aux.get_height() // 2) - (go_back_img.get_height() // 2)))
+            screen.blit(go_back_img,
+                        ((screen.get_width() // 2) - (go_back_img.get_width() // 2),
+                         screen.get_height() // 2 + (aux.get_height() // 2)))
 
-            screen.blit(font, (
-                (screen.get_width() // 2) - (font.get_width() // 2),
-                (screen.get_height() // 2) - (font.get_height() // 2)))
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_press = pygame.mouse.get_pressed()[0]
+
+            if mouse_press:
+                if go_back_img.get_rect().collidepoint(mouse_pos):
+                    pass
 
     # LOGICA
     def game_logic():
+        handle_mouse_click()
+
+    def handle_mouse_click():
+        global last_click
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()[0]
 
         if mouse_pressed:
-            handle_mouse_click(mouse_pos)
+            current_time = pygame.time.get_ticks()
+            elapsed_time = current_time - last_click
 
-    def handle_mouse_click(mouse_pos):
-        global last_click
-
-        current_time = pygame.time.get_ticks()
-        elapsed_time = current_time - last_click
-
-        if elapsed_time >= mouse_cooldown:
-            for enemie in current_wave.get_enemies():
-                if enemie.rect.collidepoint(mouse_pos):
-                    enemie.recibir_dano(mouse_dmg)
-                    last_click = current_time
-                    print(f"Last hit: {last_click}")
-                    break
+            if elapsed_time >= mouse_cooldown:
+                for enemie in current_wave.get_enemies():
+                    if enemie.rect.collidepoint(mouse_pos):
+                        enemie.recibir_dano(mouse_dmg)
+                        last_click = current_time
+                        # print(f"Last hit: {last_click}")
+                        break
 
     def cd_mouse_bar():
         global mouse_cooldown, last_click
@@ -148,6 +160,10 @@ def start_game():
     def interface():
         global current_wave, wave_number, aquafragments
 
+        # Detectar clic en los botones
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_click = pygame.mouse.get_pressed()[0]
+
         screen.blit(interfaz_bg, interfaz_rect)  # Interfaz background
 
         screen.blit(pygame.transform.scale(coin_img, (30, 30)).convert_alpha(), (width // 2 - 44, 33))
@@ -160,45 +176,41 @@ def start_game():
                                                       (20, 0, 0)), (width - 90, 35))
         EffectsMenu.draw_eff_menu(screen, interfaz_rect, player)
 
+        go_back_img = pygame.transform.scale(go_back, (45, 45)).convert_alpha()
+        go_back_rect = pygame.Rect((screen.get_width() // 2 - 40) - 60, screen.get_height() * 0.75 - 40, 80, 80)
+
+        screen.blit(go_back_img, ((interfaz_rect.left + 20), interfaz_rect.top + 30))  # go_back
+
+        if go_back_rect.collidepoint(mouse_pos):  # Verifica si el clic fue en go_back
+            # Ir al menú
+            return True
+
         # WAVE COMPLETE
         if current_wave.is_completed():
-            font = pygame.font.Font(None, 74).render(str("¡Enhorabuena ganaste!"), 1, (255, 255, 255))
-            screen.blit(font, (
-                (screen.get_width() // 2) - (font.get_width() // 2),
-                (screen.get_height() // 2) - (font.get_height() // 2)))
 
-            go_back_img = pygame.transform.scale(go_back, (80, 80)).convert_alpha()
             go_next_img = pygame.transform.scale(go_next, (80, 80)).convert_alpha()
 
-            screen.blit(go_back_img, ((screen.get_width() // 2 - 40) - 60, screen.get_height() * 0.75 - 40))  # go_back
-            screen.blit(go_next_img, ((screen.get_width() // 2 - 40) + 60, screen.get_height() * 0.75 - 40))  # go_next
+            screen.blit(go_next_img, ((screen.get_width() - go_next_img.get_width() - 30),
+                                      screen.get_height() - go_next_img.get_height() - 20))  # go_next
 
-            go_back_rect = pygame.Rect((screen.get_width() // 2 - 40) - 60, screen.get_height() * 0.75 - 40, 80, 80)
-            go_next_rect = pygame.Rect((screen.get_width() // 2 - 40) + 60, screen.get_height() * 0.75 - 40, 80, 80)
+            go_next_rect = pygame.Rect(screen.get_width() - go_next_img.get_width() - 30,
+                                       screen.get_height() - go_next_img.get_height() - 20, 80, 80)
 
-            # Detectar clic en los botones
-            mouse_pos = pygame.mouse.get_pos()
-            mouse_click = pygame.mouse.get_pressed()[0]
+            font = pygame.font.Font(None, 24).render(str("Wave Complete"), 1, (20, 250, 20))
+            screen.blit(font, (go_next_rect.left - 20,
+                               go_next_rect.top - 20))
 
             if mouse_click:  # Verificar si es un clic completo
-                if go_back_rect.collidepoint(mouse_pos):  # Verifica si el clic fue en go_back
-                    # Ir al menú
-                    return True
-
                 if go_next_rect.collidepoint(mouse_pos):  # Verifica si el clic fue en go_next
                     wave_number += 1
-                    cd = max(1000, wave_config.get("enemy_cooldown") - (wave_number * 50))
-                    new_wave_config = {
-                        "num_enemies": calculate_num_enemies(),
-                        "enemy_cooldown": cd,
-                        "enemy_types": None
-                    }
                     current_wave = WaveBuilder.build_wave(screen, allies, new_wave_config)
                     allies.set_enemies(current_wave.get_enemies())
                     return True  # Salir del bucle y comenzar la siguiente wave
 
             # Actualizar el estado del botón del ratón del ciclo anterior
             game_logic.mouse_pressed_last_frame = mouse_click
+
+    pepito = Boss(screen.get_width() // 2, screen.get_height() // 2, player)
 
     # Bucle del JUEGO
     running = True
@@ -217,6 +229,8 @@ def start_game():
         if not current_wave.is_completed():
             current_wave.draw()  # Enemies Wave
             current_wave.update()
+
+        pepito.draw_healthbar(screen)
 
         # Interfaz
         interface()  # Toda la interfaz

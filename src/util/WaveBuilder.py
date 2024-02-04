@@ -9,18 +9,20 @@ from src.util.Wave import Wave
 class WaveBuilder:
     @staticmethod
     def build_wave(screen, allies, wave_config):
-        num_enemies = wave_config.get("num_enemies", 4)
+        num_enemies = wave_config.get("num_enemies", 3)
         enemy_cooldown = wave_config.get("enemy_cooldown", 2000)
         enemy_types = wave_config.get("enemy_types", None)
+        bosses = 0
 
         if not enemy_types:
-            enemy_types = [Gota]
+            enemy_types = []
             current_wave = game_logic.wave_number
 
-            if current_wave % 10 == 0:  # Cada 10 rondas
-                enemy_types.append(Boss)
-                # Restringir a solo un Boss por wave
-                num_enemies -= 1
+            if bosses > 1:
+                if current_wave % 10 == 0:  # Cada 10 rondas
+                    enemy_types.append(Boss)
+                    num_enemies -= 1
+                    bosses -= 1
 
             gota_count = int(num_enemies * 1)
             gota_escudo_count = int(num_enemies * 0)
@@ -29,7 +31,7 @@ class WaveBuilder:
             if current_wave > 6:
                 gota_count = int(num_enemies * 0.6)
                 gota_escudo_count = int(num_enemies * 0.3)
-                gota_musculosa_count = num_enemies - gota_count - gota_escudo_count
+                gota_musculosa_count = int(num_enemies - gota_count - gota_escudo_count)
 
             if current_wave > 3:
                 gota_count = int(num_enemies * 0.7)

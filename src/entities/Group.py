@@ -11,12 +11,11 @@ class Group(pygame.sprite.Group):
         self.screen = screen
 
     def draw(self, surface, bgsurf=None, special_flags=0):
-        super().draw(surface, bgsurf, special_flags)
         for entity in self.sprites():
             if isinstance(entity, src.entities.Player.Player):
-                entity.draw_healthbar(self.screen)
+                entity.draw(surface)
             if isinstance(entity, src.entities.Enemy.Enemy):
-                entity.draw_healthbar(self.screen)
+                entity.draw(surface)
 
     def set_enemies(self, enemies):
         for entity in self.sprites():

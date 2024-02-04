@@ -4,29 +4,51 @@ from src import game_logic
 from src.entities.Enemy import Enemy
 
 
+def calc_af():
+    wave_num = game_logic.wave_number
+    aquafragments = int(max(0, wave_num - 1) * (1.12 ** game_logic.wave_number)) * 10
+    return aquafragments
+
+
 class Boss(Enemy):
 
-    def __init__(self, x, y, size, enemies, vida, ataque, velocidad, velocidad_ataque, rango, aquafragments):
-        super().__init__(x, y, size, enemies, vida, ataque, velocidad, velocidad_ataque, rango, aquafragments)
+    def __init__(self, x, y, objetivo):
+        size = (50, 50)
+        vida = 200
+        ataque = 200
+        velocidad = 200
+        velocidad_ataque = 200
+        rango = 10
+        super().__init__(x, y, size, objetivo, vida, ataque, velocidad, velocidad_ataque, rango, element="agua")
+
+        self.nombre = "El legendario pepito"
+
+        self.aquafragments = calc_af()
+
+        self.vida = self.calc_vida()
+        self.vida_maxima = self.vida
+        self.ataque = self.calc_atk()
 
         # Healthbar
-        self.barra_vida_color = (180, 60, 60)
-        self.barra_vida_inactiva = (40, 20, 20)
+        self.barra_vida_color = (90, 0, 158)
+        self.barra_vida_inactiva = (36, 15, 52)
 
     def draw_healthbar(self, screen):  # Barra de vida
         barra_vida_ancho = (screen.get_width() // 2 - 40)
         barra_vida_alto = 50
         vida_proporcion = self.vida / self.vida_maxima
 
-        ancho_vida_proporcional = self.barra_vida_ancho * vida_proporcion
+        ancho_vida_proporcional = barra_vida_ancho * vida_proporcion
 
-        barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.barra_vida_ancho, self.barra_vida_alto)
+        barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - 20, barra_vida_ancho, barra_vida_alto)
 
-        vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - 20, ancho_vida_proporcional, self.barra_vida_alto)
+        vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - 20, ancho_vida_proporcional, barra_vida_alto)
+        vida_maxima_rect = pygame.Rect(self.rect.x, self.rect.y - 20, barra_vida_ancho, barra_vida_alto)
 
         # Dibuja la barra de vida
         pygame.draw.rect(screen, self.barra_vida_inactiva, barra_vida_rect)  # Fondo barra
         pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect)  # Barra de vida
+        pygame.draw.rect(screen, (212, 175, 55), vida_maxima_rect, 2)  # Marco barra máxima
 
         txt_size = 16
         texto_puntuacion = pygame.font.Font(None, txt_size).render(str(f"{self.vida} / {self.vida_maxima}"), True,
@@ -83,3 +105,9 @@ class Boss(Enemy):
             else:
                 if enemigo.alive():
                     self.rect.x -= self.velocidad  # moverse a la izquierda
+
+    def calc_vida(self):
+        return 200
+
+    def calc_atk(self):
+        return 200
