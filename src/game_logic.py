@@ -6,7 +6,6 @@ import pygame.event
 import src.controls.mouse as mouseconf
 import src.util.gameconf as conf
 from src.entities.Group import Group
-from src.entities.enemies.Boss import Boss
 from src.ui import EffectsMenu
 from src.util.WaveBuilder import WaveBuilder
 from src.util.users import *
@@ -26,6 +25,7 @@ coin_img = load_image(directorio="assets/ui/general/coin.png")
 aquafragments: int = 0  # Monedas en partida
 wave_number: int = 1  # Wave actual
 current_wave = None
+multiplier = 1  # Aumento en el número de enemigos por cada wave
 
 # Mouse Variables
 mouse_dmg = 5
@@ -34,11 +34,11 @@ last_click = -5000
 
 
 def calculate_num_enemies():
-    # Ajusta esta lógica según tus necesidades
-    multiplier = 1  # Aumento en el número de enemigos por cada wave
-    num_enemies = math.ceil((5 * wave_number / 2) / multiplier)
+    global multiplier
     if wave_number % 20 == 0:
         multiplier += 1
+    num_enemies = math.ceil((5 * (wave_number / 2)) / multiplier)
+
     return num_enemies
 
 
@@ -72,7 +72,6 @@ def start_game():
 
     # Entities                               Menos el 20% del height
     player = Player((width // 2), (height // 2 + (height * 0.22)), (90, 90))
-    player.cargar_effects()
     player.vida = player.vida_maxima  # Curamos al player para que empiece con toda la vida
 
     allies = Group(screen)
@@ -203,14 +202,18 @@ def start_game():
             if mouse_click:  # Verificar si es un clic completo
                 if go_next_rect.collidepoint(mouse_pos):  # Verifica si el clic fue en go_next
                     wave_number += 1
-                    current_wave = WaveBuilder.build_wave(screen, allies, new_wave_config)
+                    wave_config = {
+                        "num_enemies": calculate_num_enemies(),
+                        "enemy_cooldown": 2000,
+                        "enemy_types": None
+                    }
+                    current_wave = WaveBuilder.build_wave(screen, allies, wave_config)
                     allies.set_enemies(current_wave.get_enemies())
                     return True  # Salir del bucle y comenzar la siguiente wave
 
             # Actualizar el estado del botón del ratón del ciclo anterior
             game_logic.mouse_pressed_last_frame = mouse_click
 
-    pepito = Boss(screen.get_width() // 2, screen.get_height() // 2, player)
 
     # Bucle del JUEGO
     running = True
@@ -219,10 +222,6 @@ def start_game():
         screen.fill((255, 255, 255))  # Color del fondo
         screen.blit(bg_img, (0, 0))
 
-        # ---- LOGICA
-        game_logic()
-        # ---- LOGICA
-
         # Dibujar y actualizar sprites
         allies.draw(screen)  # Player, estructuras aliadas etc
         allies.update()
@@ -230,12 +229,14 @@ def start_game():
             current_wave.draw()  # Enemies Wave
             current_wave.update()
 
-        pepito.draw_healthbar(screen)
-
         # Interfaz
         interface()  # Toda la interfaz
         if not player.alive():
             game_over()
+
+        # ---- LOGICA
+        game_logic()
+        # ---- LOGICA
 
         # Cursor
         cd_mouse_bar()

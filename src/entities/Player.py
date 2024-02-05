@@ -39,7 +39,7 @@ class Player(Entity):
         # Cosmetics
         self.focusing_sprite = self.load_image(f"{self.player_path}/animations", "focusing.png")
         self.attacking_sprite = self.load_image(f"{self.player_path}/animations", "attacking.png")
-        self.attack_animation_duration = 300  # Duración en milisegundos anim ataque
+        self.attack_animation_duration = 400 / velocidad_ataque  # Duración en milisegundos anim ataque
         self.attack_animation_start_time = 0  # Inicializado en 0
 
     def draw_healthbar(self, screen):  # Barra de vida
@@ -92,8 +92,11 @@ class Player(Entity):
         return distancia <= self.rango
 
     def atacar(self):
+        # Después del bucle, actualiza el estado de self.attacking para que dure el tiempo deseado
+        current_time = pygame.time.get_ticks()
+        if self.attacking and (current_time - self.attack_animation_start_time) >= self.attack_animation_duration:
+            self.attacking = False
         self.focusing = False
-
         for enemigo in self.enemies:
             if self.esta_en_rango(enemigo):
                 self.focusing = True
@@ -106,11 +109,6 @@ class Player(Entity):
                         self.vida = max(0, self.vida + int(
                             enemigo.tabla_tipos(self.calc_dmg(), enemigo.element) * porcent))
                         self.tiempo_ultimo_ataque = pygame.time.get_ticks()
-
-        # Después del bucle, actualiza el estado de self.attacking para que dure el tiempo deseado
-        current_time = pygame.time.get_ticks()
-        if self.attacking and (current_time - self.attack_animation_start_time) >= self.attack_animation_duration:
-            self.attacking = False
 
     def recibir_dano(self, cantidad, elemento_enemigo="neutro"):
         if self.vida > 0:
@@ -133,9 +131,9 @@ class Player(Entity):
         x.append(effect)
         self.effects = x
 
-    def cargar_effects(self):  # Update Effects
+    def cargar_effect(self, instance):  # Update Effects
         for effect in self.effects:
-            if self.effects is not None:
+            if self.effects is not None and isinstance(effect, instance):
                 effect.cargar(self)
 
     def draw(self, screen):

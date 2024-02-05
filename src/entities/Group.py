@@ -12,10 +12,7 @@ class Group(pygame.sprite.Group):
 
     def draw(self, surface, bgsurf=None, special_flags=0):
         for entity in self.sprites():
-            if isinstance(entity, src.entities.Player.Player):
-                entity.draw(surface)
-            if isinstance(entity, src.entities.Enemy.Enemy):
-                entity.draw(surface)
+            entity.draw(surface)
 
     def set_enemies(self, enemies):
         for entity in self.sprites():

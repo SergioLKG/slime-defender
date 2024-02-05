@@ -11,7 +11,7 @@ class Gota(Enemy):
         ataque = 5
         velocidad = 0.6
         velocidad_ataque = 1
-        size = (50, 50)
+        size = (40, 40)
         rango = (size[0] // 2 + 50)
         super().__init__(x, y, size, objetivo, vida, ataque, velocidad, velocidad_ataque, rango, element="agua")
 
@@ -28,11 +28,17 @@ class Gota(Enemy):
         return vida_final
 
     def calc_atk(self):
-        ataque_final = self.ataque + (1.1 ** game_logic.wave_number)
-        return int(ataque_final)
+        ataque_final = self.calc_ataque_anterior()
+        return ataque_final
 
     def calc_vida_anterior(self):
         vida_anterior = math.ceil(self.vida_maxima)
         for i in range(game_logic.wave_number):
             vida_anterior += math.ceil((1.1 ** game_logic.wave_number))
         return vida_anterior
+
+    def calc_ataque_anterior(self):
+        ataque_anterior = math.ceil(self.ataque)
+        for i in range(game_logic.wave_number):
+            ataque_anterior += math.ceil((1.1 ** game_logic.wave_number))
+        return ataque_anterior

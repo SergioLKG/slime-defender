@@ -14,7 +14,8 @@ class RoboVida(Effect):
         super().__init__(name, precio, tier, categoria)
 
     def cargar(self, player: Player):
-        player.robo_vida = self.calculate(player.vida) / 10
+        player.robo_vida = self.calculate(player.robo_vida)
+        print("robo de vida", player.robo_vida)
 
     def calculate(self, lpsteal):
         calc_steal = math.ceil(lpsteal + (1.005 ** (self.tier + 1)))

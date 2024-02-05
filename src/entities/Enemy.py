@@ -66,25 +66,30 @@ class Enemy(Entity):
 
         ancho_vida_proporcional = self.barra_vida_ancho * vida_proporcion
 
-        barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.barra_vida_ancho, self.barra_vida_alto)
-        vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - 20, ancho_vida_proporcional, self.barra_vida_alto)
-        vida_maxima_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.barra_vida_ancho, self.barra_vida_alto)
+        top = self.rect.top - 10 - self.height // 2
+        left = self.rect.left - self.width // 2
+
+        barra_vida_rect = pygame.Rect(left, top, self.barra_vida_ancho, self.barra_vida_alto)
+        vida_actual_rect = pygame.Rect(left, top, ancho_vida_proporcional, self.barra_vida_alto)
+        vida_maxima_rect = pygame.Rect(left, top, self.barra_vida_ancho, self.barra_vida_alto)
 
         pygame.draw.rect(screen, self.barra_vida_inactiva, barra_vida_rect)  # Fondo barra
         pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect)  # Barra de vida
         pygame.draw.rect(screen, (50, 50, 50), vida_maxima_rect, 2)  # Marco barra máxima
 
-        # Dibujar numero de la vida actual
-        # Contador numerico vida
-        txt_size = 15
-        texto_puntuacion = pygame.font.Font(None, txt_size).render(str(int(self.vida)), True, (255, 255, 255))
-        screen.blit(texto_puntuacion,
-                    (barra_vida_rect.x - texto_puntuacion.get_width() // 2 + barra_vida_rect.width // 2,
-                     barra_vida_rect.y - texto_puntuacion.get_height() // 2 + barra_vida_rect.height // 2))
+        # # Contador numerico vida
+        # txt_size = math.ceil(self.barra_vida_alto * 1.20)
+        # texto_puntuacion = pygame.font.Font(None, txt_size).render(str(int(self.vida)), True, (255, 255, 255))
+        # screen.blit(texto_puntuacion,
+        #             (barra_vida_rect.x - texto_puntuacion.get_width() // 2 + barra_vida_rect.width // 2,
+        #              barra_vida_rect.y - texto_puntuacion.get_height() // 2 + barra_vida_rect.height // 2))
 
         # Element
-        screen.blit(self.element_image,
-                    ((barra_vida_rect.left + 10) - (barra_vida_rect.width / 2), barra_vida_rect.top - 5))
+        element_height = math.ceil(self.barra_vida_alto * 1.8)  # Puedes ajustar el factor según tu preferencia
+        element_image_scaled = pygame.transform.scale(self.element_image, (element_height, element_height))
+        screen.blit(element_image_scaled,
+                    (barra_vida_rect.midleft[0] - (element_image_scaled.get_width() // 2),
+                     barra_vida_rect.midleft[1] - (element_image_scaled.get_height() // 2)))
 
     def atacar(self, enemigo):
         if self.esta_en_rango(enemigo):

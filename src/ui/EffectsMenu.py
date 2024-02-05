@@ -124,17 +124,17 @@ def draw_eff_menu(screen, interfaz_rect, player):
         if boton_buff_vida_rect.collidepoint(mouse_pos):
             if aquafragments >= precio_buff_vida:  # Costo del BuffVida
                 player.add_effect(BuffVida(tier_actual_buff_vida + 1))
-                player.cargar_effects()
+                player.cargar_effect(BuffVida)
                 game_logic.aquafragments -= precio_buff_vida
         elif boton_buff_dano_rect.collidepoint(mouse_pos):
             if aquafragments >= precio_buff_dano:  # Costo del BuffVida
                 player.add_effect(BuffAttack(tier_actual_buff_dano + 1))
-                player.cargar_effects()
+                player.cargar_effect(BuffAttack)
                 game_logic.aquafragments -= precio_buff_dano
         elif boton_robo_vida_rect.collidepoint(mouse_pos):
             if aquafragments >= precio_robo_vida:  # Costo del BuffVida
                 player.add_effect(RoboVida(tier_actual_robo_vida + 1))
-                player.cargar_effects()
+                player.cargar_effect(BuffAttack)
                 game_logic.aquafragments -= precio_robo_vida
 
     # Actualizar el estado del botón del ratón del ciclo anterior

@@ -1,3 +1,5 @@
+import math
+
 import pygame
 
 from src import game_logic
@@ -30,6 +32,7 @@ class Boss(Enemy):
         self.ataque = self.calc_atk()
 
         # Healthbar
+        self.barra_vida_alto = 10
         self.barra_vida_color = (90, 0, 158)
         self.barra_vida_inactiva = (36, 15, 52)
 
@@ -40,22 +43,31 @@ class Boss(Enemy):
 
         ancho_vida_proporcional = barra_vida_ancho * vida_proporcion
 
-        barra_vida_rect = pygame.Rect(self.rect.x, self.rect.y - 20, barra_vida_ancho, barra_vida_alto)
+        top = screen.get_height() * 0.15
+        left = screen.get_width() // 2 - 10
 
-        vida_actual_rect = pygame.Rect(self.rect.x, self.rect.y - 20, ancho_vida_proporcional, barra_vida_alto)
-        vida_maxima_rect = pygame.Rect(self.rect.x, self.rect.y - 20, barra_vida_ancho, barra_vida_alto)
+        barra_vida_rect = pygame.Rect(left, top, barra_vida_ancho, barra_vida_alto)
+        vida_actual_rect = pygame.Rect(left, top, ancho_vida_proporcional, barra_vida_alto)
+        vida_maxima_rect = pygame.Rect(left, top, barra_vida_ancho, barra_vida_alto)
 
         # Dibuja la barra de vida
         pygame.draw.rect(screen, self.barra_vida_inactiva, barra_vida_rect)  # Fondo barra
         pygame.draw.rect(screen, self.barra_vida_color, vida_actual_rect)  # Barra de vida
         pygame.draw.rect(screen, (212, 175, 55), vida_maxima_rect, 2)  # Marco barra máxima
 
-        txt_size = 16
+        txt_size = math.ceil(self.barra_vida_alto * 2)
         texto_puntuacion = pygame.font.Font(None, txt_size).render(str(f"{self.vida} / {self.vida_maxima}"), True,
                                                                    (255, 255, 255))
+        txt_size_nom = math.ceil(self.barra_vida_alto * 3)
+        texto_nombre = pygame.font.Font(None, txt_size_nom).render(str(f"{self.nombre}"), True,
+                                                               (255, 200, 100))
         screen.blit(texto_puntuacion,
                     (barra_vida_rect.x - texto_puntuacion.get_width() // 2 + barra_vida_rect.width // 2,
                      barra_vida_rect.y - texto_puntuacion.get_height() // 2 + barra_vida_rect.height // 2))
+
+        screen.blit(texto_nombre,
+                    (barra_vida_rect.x - texto_puntuacion.get_width() // 2 + barra_vida_rect.width // 3,
+                     barra_vida_rect.y - texto_puntuacion.get_height() // 2 - 5))
 
     def atacar(self, enemigo):
         if self.esta_en_rango(enemigo):

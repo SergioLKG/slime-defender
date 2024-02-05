@@ -4,6 +4,8 @@ import pygame
 
 from src.entities.Group import Group
 from src.entities.enemies.Gota import Gota
+from src.entities.enemies.GotaMuscle import GotaMuscle
+from src.entities.enemies.GotaShield import GotaShield
 
 
 class Wave:
@@ -25,6 +27,10 @@ class Wave:
             if current_time > self.next_enemy_time:
                 enemy_type = random.choice(self.enemy_types)
                 r_height = random.uniform(0.23, 0.27)
+                if isinstance(GotaMuscle, enemy_type):
+                    r_height = 0.20
+                if isinstance(GotaShield, enemy_type):
+                    r_height = 0.20
                 enemy = enemy_type((self.screen.get_width()),
                                    (self.screen.get_height() // 2 + (self.screen.get_height() * r_height)),
                                    self.allies)
