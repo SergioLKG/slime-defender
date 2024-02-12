@@ -1,12 +1,10 @@
 # game_logic.py
 import math
 
-import pygame.event
-
 import src.controls.mouse as mouseconf
 import src.util.gameconf as conf
 from src.entities.Group import Group
-from src.ui import EffectsMenu
+from src.ui import EffectsMenu, MouseEffects
 from src.util.WaveBuilder import WaveBuilder
 from src.util.users import *
 
@@ -19,7 +17,6 @@ def load_image(directorio):
 
 
 # Globals
-mouse_pressed_last_frame = False  # Ultimo ckick
 shop_coins: int = 0  # Monedas de la tienda
 coin_img = load_image(directorio="assets/ui/general/coin.png")
 aquafragments: int = 0  # Monedas en partida
@@ -28,8 +25,33 @@ current_wave = None
 multiplier = 1  # Aumento en el número de enemigos por cada wave
 
 # Mouse Variables
+mouse_pressed_last_frame = False  # Ultimo ckick
+tier_dmg_buff = 0
+tier_cd_buff = 0
 mouse_dmg = 5
 mouse_cooldown = 5000
+
+
+def calc_mouse_buff(n: [0 - 1]):
+    global tier_dmg_buff, tier_cd_buff, mouse_dmg, mouse_cooldown
+    limite_dmg = 100
+    limite_cd = 20
+    if n == 0:  # dmg buff
+        if tier_dmg_buff != limite_dmg:
+            mouse_dmg = math.ceil(0.75 * (1.1 ** tier_dmg_buff))
+            tier_dmg_buff += 1
+        else:
+            print("Error")
+    elif n == 1:  # cd buff
+        if tier_cd_buff != limite_cd:
+            mouse_cooldown = math.ceil(37 * math.log(1.2 * (1.4 ** tier_cd_buff), 2))
+            tier_cd_buff += 1
+        else:
+            print("Error")
+    else:
+        print("Error")
+
+
 last_click = -5000
 
 
@@ -92,6 +114,7 @@ def start_game():
     padding = 5  # px
     interfaz_rect.inflate_ip(-padding * 2, -padding * 2)  # Ajustar para el padding
     EffectsMenu.load_ef_menu_img()
+    MouseEffects.load_ef_menu_img()
 
     # START GAME
     # user: Usuario = GameMenu.getUser() # User info
@@ -113,7 +136,7 @@ def start_game():
 
             if mouse_press:
                 if go_back_img.get_rect().collidepoint(mouse_pos):
-                    pass
+                    quit(True)
 
     # LOGICA
     def game_logic():
@@ -174,6 +197,7 @@ def start_game():
         screen.blit(pygame.font.Font(None, 24).render("Wave " + str(wave_number), True,
                                                       (20, 0, 0)), (width - 90, 35))
         EffectsMenu.draw_eff_menu(screen, interfaz_rect, player)
+        MouseEffects.draw_eff_menu(screen, interfaz_rect)
 
         go_back_img = pygame.transform.scale(go_back, (45, 45)).convert_alpha()
         go_back_rect = pygame.Rect((screen.get_width() // 2 - 40) - 60, screen.get_height() * 0.75 - 40, 80, 80)
@@ -213,7 +237,6 @@ def start_game():
 
             # Actualizar el estado del botón del ratón del ciclo anterior
             game_logic.mouse_pressed_last_frame = mouse_click
-
 
     # Bucle del JUEGO
     running = True

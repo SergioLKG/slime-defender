@@ -35,11 +35,14 @@ def draw_eff_menu(screen, interfaz_rect, player):
     global img_boton_off, img_boton_on
     aquafragments = game_logic.aquafragments
 
-    top = interfaz_rect.top + 50
-    left = interfaz_rect.left
+    top = interfaz_rect.top + 70
+    left = interfaz_rect.left + 20
     # -------------------- TITLE -----------------------
+    bg_eff = pygame.Rect(left, top + 10, interfaz_rect.w - 30, 200)  # TODO Meter trasparencia.
+    pygame.draw.rect(screen, (160, 140, 120), bg_eff)
+    screen.blit(pygame.font.Font(None, 30).render(f"Slime Buffs", True, (0, 0, 0)), (left + 10, top + 20))
     # --------------------- EFFECTS ---------------------
-    margin_left_ef = 30
+    margin_left_ef = 25
     # ########### BuffVida ###########
     tier_actual_buff_vida = 0
     for effect in player.effects:
@@ -54,13 +57,13 @@ def draw_eff_menu(screen, interfaz_rect, player):
 
     texto_boton_buff_vida = pygame.font.Font(None, 24).render(f" + Health", True,
                                                               (0, 0, 0))
-    info_txt_buff_dano = pygame.font.Font(None, 20).render(
+    info_txt_buff_vida = pygame.font.Font(None, 20).render(
         f"{precio_buff_vida} AF | +{(BuffVida(tier_actual_buff_vida).calculate(player.vida_maxima))} HP", True,
         (0, 0, 0))
 
     boton_buff_vida_rect = pygame.Rect(left + margin_left_ef, top + 50, 160, 40)
 
-    screen.blit(info_txt_buff_dano, (boton_buff_vida_rect.left + 165, boton_buff_vida_rect.top + 15))
+    screen.blit(info_txt_buff_vida, (boton_buff_vida_rect.left + 165, boton_buff_vida_rect.top + 15))
     screen.blit(texto_boton_buff_vida, (boton_buff_vida_rect.left + 35, boton_buff_vida_rect.top + 13))
     # #################################
 
@@ -139,4 +142,3 @@ def draw_eff_menu(screen, interfaz_rect, player):
 
     # Actualizar el estado del botón del ratón del ciclo anterior
     game_logic.mouse_pressed_last_frame = mouse_pressed
-    # --------------------- EFFECTS END ---------------------
