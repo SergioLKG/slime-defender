@@ -4,7 +4,7 @@
 
 ### Idea de proyecto: Juego estilo idle/clicker, de defender la fortaleza.
 
-### Título: Slime Defender: Aquaphobia
+## Título: Slime Defender: Aquaphobia
 
 El juego consiste en defender a un Slime de enemigos hechos de agua, ya que esto lo haría derretirse… ¡moriría! 😨
 
@@ -14,7 +14,7 @@ La tarea del jugador es proteger a los slimes haciendo clic estratégico y gesti
 
 Proteger al slime durante el mayor tiempo posible, resistiendo las oleadas de enemigos acuáticos y alcanzando niveles más altos para desbloquear nuevas habilidades y desafíos. La y la gestión eficiente de recursos son clave para el éxito en Slime Defender: Aquaphobia.
 
-* ### Requierements 🛠:
+## Requierements 🛠:
 
 ```cmd
 > python.exe -m pip install pygame
