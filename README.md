@@ -1,11 +1,6 @@
 # Slime Defender: Aquaphobia
 
-## Planteamiento del Proyecto
-
-### Idea de proyecto: Juego estilo idle/clicker, de defender la fortaleza.
-
-## Título: Slime Defender: Aquaphobia
-
+## Descripción 📖:
 El juego consiste en defender a un Slime de enemigos hechos de agua, ya que esto lo haría derretirse… ¡moriría! 😨
 
 "Slime Defender: Aquaphobia" es un juego estilo idle que combina elementos de defensa y estrategia, ambientado en un mundo mágico donde los adorables slimes están siendo amenazados por enemigos acuáticos que los derriten.
